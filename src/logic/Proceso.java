@@ -33,11 +33,8 @@ public class Proceso {
 	 * 			que le sobrarìa al procesador o le faltaria
 	 * 			 para ejecutar ese metodo
 	 */
-	public int ejecutar(int quatum){
-		this.estado = Estado.EJECUCION;
-		int aux = this.tiempoEjecucionR;
-		this.tiempoEjecucionR -= 1;
-		return quatum - aux;
+	public void ejecutar(){
+		this.estado = Estado.EJECUCION;	
 	}
 	
 	public void tiempoNoCompletado(){
