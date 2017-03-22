@@ -3,7 +3,7 @@ package logic;
 public class Proceso {
 
 	private String nombre;
-	private int tiempoTotal, tiempoActual, 
+	private int tiempoTotal, 
 				tiempoEjecucionR, tiempoEjecucionT, //R = Restante, T = Total 
 				tiempoBloqueoR, tiempoBloqueoT; 
 	private Estado estado;
@@ -14,7 +14,6 @@ public class Proceso {
 		this.tiempoEjecucionT = tiempoEjecucionT;
 		
 		this.tiempoTotal = this.tiempoEjecucionT;
-		this.tiempoActual = 0;
 		this.tiempoEjecucionR = this.tiempoEjecucionT;
 		this.tiempoBloqueoR = 0;
 		this.tiempoBloqueoT = 0;
@@ -37,22 +36,34 @@ public class Proceso {
 		this.estado = Estado.EJECUCION;	
 	}
 	
-	public void tiempoNoCompletado(){
-		this.estado = Estado.LISTO;
+	public void disminuirTiempoEjecucion(){
+		this.tiempoEjecucionR--;
 	}
 	
+//	public void tiempoNoCompletado(){
+//		this.estado = Estado.LISTO;
+//	}
+	
 	public void esperarSuceso(int tiempoBloqueo){
-		this.estado = Estado.BLOQUEADO;
 		this.actualizarTiempoBloqueo(tiempoBloqueo);
 		this.actualizarTiempoTotal();
+		this.estado = Estado.BLOQUEADO;
+	}
+	
+	public void dimisnutirTiempoBloqueo(){
+		this.tiempoBloqueoR--;
 	}
 	
 	public void ocurreSuceso(){
+		this.tiempoBloqueoR = 0;
 		this.estado = Estado.LISTO;
 	}
 	
 	public void liberar(){
-		this.estado = Estado.TERMINADO;
+		if(this.tiempoBloqueoR == 0 && this.tiempoEjecucionR == 0)
+			this.estado = Estado.TERMINADO;					
+		else 
+			System.err.println("NO DEBE LIBERAR EL PROCESO AUN");
 	}
 	
 	private void actualizarTiempoTotal(){
@@ -71,11 +82,6 @@ public class Proceso {
 	public int getTiempoTotal() {
 		return tiempoTotal;
 	}
-
-	public int getTiempoActual() {
-		return tiempoActual;
-	}
-
 	public int getTiempoEjecucionR() {
 		return tiempoEjecucionR;
 	}
