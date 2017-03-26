@@ -20,6 +20,10 @@ public class Proceso {
 		this.estado = Estado.NUEVO;
 	}
 	
+	public Proceso(){
+		super();
+	}
+	
 	public void admitir(){
 		this.estado = Estado.LISTO;
 	}
@@ -37,7 +41,10 @@ public class Proceso {
 	}
 	
 	public void disminuirTiempoEjecucion(){
-		this.tiempoEjecucionR--;
+		if (this.tiempoEjecucionR!=0)
+			this.tiempoEjecucionR--;
+		else
+			this.estado = Estado.TERMINADO;
 	}
 	
 //	public void tiempoNoCompletado(){
@@ -64,6 +71,14 @@ public class Proceso {
 			this.estado = Estado.TERMINADO;					
 		else 
 			System.err.println("NO DEBE LIBERAR EL PROCESO AUN");
+	}
+	
+	public boolean isBloqueado(){
+		return this.estado.compareTo(Estado.BLOQUEADO) == 0;
+	}
+	
+	public boolean isTerminado(){
+		return this.estado.compareTo(Estado.TERMINADO) == 0;
 	}
 	
 	private void actualizarTiempoTotal(){

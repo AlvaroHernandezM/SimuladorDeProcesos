@@ -12,6 +12,7 @@ public class ColaProcesos {
 	}
 	
 	public boolean agregar(Proceso proceso){
+		System.out.println(proceso.getNombre()+" - "+proceso.getTiempoEjecucionR());
 		return this.deque.add(proceso);
 	}
 	
