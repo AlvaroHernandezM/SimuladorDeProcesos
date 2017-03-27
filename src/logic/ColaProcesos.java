@@ -24,7 +24,7 @@ public class ColaProcesos {
 		this.deque.clear();
 	}
 	
-	public int getTamaño(){
+	public int getTamano(){
 		return this.deque.size();
 	}
 	

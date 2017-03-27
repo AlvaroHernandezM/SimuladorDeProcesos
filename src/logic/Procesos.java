@@ -9,13 +9,13 @@ public class Procesos implements Runnable{
 	private Proceso auxiliar;
 	private boolean pausado;
 	private Thread thread;
-	private int numProcesos; //número de procesos ingresados
+	private int numProcesos; //numero de procesos ingresados
 	//private int quantum; //tiempo de CPU dedicado para cada proceso
 	
 	public Procesos(ColaProcesos procesosListo) {
 		super();
 		this.procesosListo = procesosListo;
-		this.numProcesos = this.procesosListo.getTamaño(); //se obtiene el numero de procesos
+		this.numProcesos = this.procesosListo.getTamano(); //se obtiene el numero de procesos
 		
 		this.ejecucion = new Ejecucion();
 		this.procesosBloqueado = new ColaProcesos();
@@ -44,7 +44,7 @@ public class Procesos implements Runnable{
 	 * @return
 	 */
 	private boolean isFinalizado(){
-		return this.procesosListo.isVacia() && this.procesosBloqueado.isVacia() && (this.procesosTerminado.getTamaño() == numProcesos);
+		return this.procesosListo.isVacia() && this.procesosBloqueado.isVacia() && (this.procesosTerminado.getTamano() == numProcesos);
 	}
 
 	@Override
