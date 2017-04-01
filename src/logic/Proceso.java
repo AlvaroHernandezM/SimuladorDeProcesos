@@ -58,7 +58,10 @@ public class Proceso {
 	}
 	
 	public void dimisnutirTiempoBloqueo(){
-		this.tiempoBloqueoR--;
+		if (this.tiempoBloqueoR!=0)
+			this.tiempoBloqueoR--;
+		else
+			this.estado = Estado.LISTO;
 	}
 	
 	public void ocurreSuceso(){
@@ -79,6 +82,9 @@ public class Proceso {
 	
 	public boolean isTerminado(){
 		return this.estado.compareTo(Estado.TERMINADO) == 0;
+	}
+	public boolean isDesbloqueado (){
+		return this.estado.compareTo(Estado.LISTO) == 0;
 	}
 	
 	private void actualizarTiempoTotal(){

@@ -1,27 +1,40 @@
 package logic;
 
-import java.util.ArrayDeque;
+import java.util.ArrayList;
 
 public class ColaProcesos {
 
-	private ArrayDeque<Proceso> deque;
+	private ArrayList<Proceso> deque;
 
 	public ColaProcesos() {
 		super();
-		this.deque = new ArrayDeque<>();
+		this.deque = new ArrayList<>();
 	}
 	
-	public boolean agregar(Proceso proceso){
+	public void  agregar(Proceso proceso){
 		System.out.println(proceso.getNombre()+" - "+proceso.getTiempoEjecucionR());
-		return this.deque.add(proceso);
+		 this.deque.add(proceso);
 	}
+	
 	
 	public Proceso getProceso(){
-		return this.deque.remove();
+		Proceso aux = this.deque.get(0);
+		this.deque.remove(0);
+		return aux;
 	}
+	
+	public Proceso getProceso(int pos){
+		return this.deque.get(pos);
+	}
+	
+	public void borrar (int pos){
+		this.deque.remove(pos);
+	}
+	
 	
 	public void clearAll(){
 		this.deque.clear();
+		System.out.println("Borrados: "+this.deque.size());
 	}
 	
 	public int getTamano(){

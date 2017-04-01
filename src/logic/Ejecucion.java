@@ -60,6 +60,10 @@ public class Ejecucion implements Runnable{
 	public void terminar(){
 		this.finalizado =  true;
 	}
+	
+	public String getNombre (){
+		return this.proceso.getNombre();
+	}
 
 	@Override
 	public void run() {
@@ -82,6 +86,11 @@ public class Ejecucion implements Runnable{
 				}
 			} else {
 				System.out.println("pausado");
+			}
+			try {
+				Thread.sleep(400); //1 segundo
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 	}
