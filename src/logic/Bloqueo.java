@@ -80,6 +80,11 @@ public class Bloqueo implements Runnable {
 						this.lista.getProceso(i).dimisnutirTiempoBloqueo();
 						System.err.println("tiempo bloqueo " + this.lista.getProceso(i).getTiempoBloqueoR());
 					}
+					try {
+						Thread.sleep(1000); // 1 segundo
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 			} else {
 				System.out.println("esperando");

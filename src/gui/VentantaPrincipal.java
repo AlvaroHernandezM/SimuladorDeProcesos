@@ -15,6 +15,7 @@ import javax.swing.table.DefaultTableModel;
 
 import logic.Bloqueo;
 import logic.ColaProcesos;
+import logic.Proceso;
 import logic.Procesos;
 
 public class VentantaPrincipal extends JFrame implements Runnable {
@@ -39,19 +40,22 @@ public class VentantaPrincipal extends JFrame implements Runnable {
 
 	private Thread thread;
 
-	public boolean estado;
+	public boolean estado,terminados;
 
-	private ColaProcesos colaProcesos;
+	//private ColaProcesos colaProcesos;
+	
+	private ColaProcesos colaAgregada;
 
 	private Procesos procesos;
 	
-	private Bloqueo bloqueo;
+	//private Bloqueo bloqueo;
 
 	public VentantaPrincipal() {
 
-		this.colaProcesos = new ColaProcesos();
-		
-		this.bloqueo = new Bloqueo();
+		this.colaAgregada = new ColaProcesos();
+		this.terminados = false;
+//		this.colaProcesos = new ColaProcesos();		
+//		this.bloqueo = new Bloqueo();
 
 		this.setTitle("Simulador de procesos");
 		this.setSize(900, 500);
@@ -82,7 +86,7 @@ public class VentantaPrincipal extends JFrame implements Runnable {
 		this.defaultTableModel.addColumn("Nombre");
 		this.defaultTableModel.addColumn("t restante");
 		this.defaultTableModel.addColumn("Estado");
-		this.defaultTableModel.addColumn("t bloqueado restante");
+		this.defaultTableModel.addColumn("tB restante");
 		this.defaultTableModel.addColumn("t total");
 
 		JScrollPane jScrollPaneLeft = new JScrollPane(this.jTableDatos);
@@ -128,25 +132,57 @@ public class VentantaPrincipal extends JFrame implements Runnable {
 
 		this.estado = false;
 	}
+	
+	public void agregarProceso(Proceso proceso){
+		this.colaAgregada.agregar(proceso);
+	}
 
 	public void refrescarLista() {
 		for (int i = this.defaultTableModel.getRowCount() - 1; i >= 0; i--) {
 			this.defaultTableModel.removeRow(i);
 		}
 
-		for (int i = 0; i < this.colaProcesos.getDeque().size(); i++) {
+		for (int i = 0; i < this.colaAgregada.getTamano(); i++) {
 
 			Object[] fila = new Object[6];
 
 			fila[0] = String.valueOf(i);
-			fila[1] = this.colaProcesos.getDeque().get(i).getNombre();
-			fila[2] = this.colaProcesos.getDeque().get(i).getTiempoEjecucionR();
-			fila[3] = this.colaProcesos.getDeque().get(i).getEstado();
-			fila[4] = this.colaProcesos.getDeque().get(i).getTiempoBloqueoT();
-			fila[5] = this.colaProcesos.getDeque().get(i).getTiempoEjecucionT();
+			fila[1] = this.colaAgregada.getProceso(i).getNombre();
+			fila[2] = this.colaAgregada.getProceso(i).getTiempoEjecucionR();
+			fila[3] = this.colaAgregada.getProceso(i).getEstado();
+			fila[4] = this.colaAgregada.getProceso(i).getTiempoBloqueoR();
+			fila[5] = this.colaAgregada.getProceso(i).getTiempoEjecucionT();
 
 			this.defaultTableModel.addRow(fila);
 		}
+		
+		if(this.terminados){
+			for (int i = 0; i < this.procesos.getBloqueados().getTamano(); i++) {
+				Object[] fila = new Object[6];
+				
+				fila[0] = String.valueOf(i);
+				fila[1] = this.procesos.getTerminados().getProceso(i).getNombre();
+				fila[2] = this.procesos.getTerminados().getProceso(i).getTiempoEjecucionR();
+				fila[3] = this.procesos.getTerminados().getProceso(i).getEstado();
+				fila[4] = this.procesos.getTerminados().getProceso(i).getTiempoBloqueoR();
+				fila[5] = this.procesos.getTerminados().getProceso(i).getTiempoEjecucionT();
+				
+				this.defaultTableModel.addRow(fila);
+			}
+			
+			for (int i = 0; i < this.procesos.getTerminados().getTamano(); i++) {
+				Object[] fila = new Object[6];
+				
+				fila[0] = String.valueOf(i);
+				fila[1] = this.procesos.getTerminados().getProceso(i).getNombre();
+				fila[2] = this.procesos.getTerminados().getProceso(i).getTiempoEjecucionR();
+				fila[3] = this.procesos.getTerminados().getProceso(i).getEstado();
+				fila[4] = this.procesos.getTerminados().getProceso(i).getTiempoBloqueoR();
+				fila[5] = this.procesos.getTerminados().getProceso(i).getTiempoEjecucionT();
+				
+				this.defaultTableModel.addRow(fila);
+			}
+		}	
 
 		this.jTextFieldNombre.setText("");
 		this.jTextFieldTiempoDeEjecucion.setText("");
@@ -155,7 +191,7 @@ public class VentantaPrincipal extends JFrame implements Runnable {
 	}
 
 	public void refrescarActual() {
-		String[] infoProceso = this.procesos.getEjecucion().getInfoProceso.split("-");
+		String[] infoProceso = this.procesos.getEjecucion().getInfoProceso().split("-");
 		this.jLabelNombreActual.setText(infoProceso[0]);
 		this.jLabelTiempoRestante.setText(infoProceso[1]);	
 	}
@@ -192,6 +228,12 @@ public class VentantaPrincipal extends JFrame implements Runnable {
 	public JTextField getjTextFieldTiempoDeEjecucion() {
 		return jTextFieldTiempoDeEjecucion;
 	}
+	
+	
+
+	public int getTiempoBloqueo() {
+		return Integer.parseInt(jTextFieldTiempoBloqueo.getText());	
+	}
 
 	public void setjTextFieldTiempoDeEjecucion(JTextField jTextFieldTiempoDeEjecucion) {
 		this.jTextFieldTiempoDeEjecucion = jTextFieldTiempoDeEjecucion;
@@ -204,13 +246,24 @@ public class VentantaPrincipal extends JFrame implements Runnable {
 	public void setEventosVentantaPrincipal(EventosVentantaPrincipal eventosVentantaPrincipal) {
 		this.eventosVentantaPrincipal = eventosVentantaPrincipal;
 	}
+	
+	
+	
 
-	public ColaProcesos getColaProcesos() {
-		return colaProcesos;
+//	public ColaProcesos getColaProcesos() {
+//		return colaProcesos;
+//	}
+//
+//	public void setColaProcesos(ColaProcesos colaProcesos) {
+//		this.colaProcesos = colaProcesos;
+//	}
+
+	public void setTerminados(boolean terminados) {
+		this.terminados = terminados;
 	}
 
-	public void setColaProcesos(ColaProcesos colaProcesos) {
-		this.colaProcesos = colaProcesos;
+	public ColaProcesos getColaAgregada() {
+		return colaAgregada;
 	}
 
 	public Procesos getProcesos() {
@@ -230,12 +283,12 @@ public class VentantaPrincipal extends JFrame implements Runnable {
 		this.thread = thread;
 	}
 
-	public Bloqueo getBloqueo() {
-		return bloqueo;
-	}
-
-	public void setBloqueo(Bloqueo bloqueo) {
-		this.bloqueo = bloqueo;
-	}
+//	public Bloqueo getBloqueo() {
+//		return bloqueo;
+//	}
+//
+//	public void setBloqueo(Bloqueo bloqueo) {
+//		this.bloqueo = bloqueo;
+//	}
 
 }

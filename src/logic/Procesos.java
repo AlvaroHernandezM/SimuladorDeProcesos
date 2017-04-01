@@ -47,6 +47,8 @@ public class Procesos implements Runnable {
 	 */
 	public void bloquear(int tiempo) {
 		this.ejecucion.bloquear(tiempo);
+		this.refrescar = true;
+
 	}
 
 	/**
@@ -74,6 +76,10 @@ public class Procesos implements Runnable {
 	public ColaProcesos getBloqueados(){
 		return this.bloqueo.getBloqueados();
 	}
+	
+	public ColaProcesos getTerminados(){
+		return this.procesosTerminado;
+	}
 
 	@Override
 	public void run() {
@@ -96,26 +102,33 @@ public class Procesos implements Runnable {
 						// if (this.ejecucion.getNombre().equals("p4")){
 						// this.ejecucion.bloquear(10);
 						// }
+						this.refrescar = true;
+						
 						try {
 							Thread.sleep(1000);
 						} catch (InterruptedException e) {
 							this.noticia = e.getMessage();
 						}
 					}
+					this.refrescar = true;
 
 					this.auxiliar = this.ejecucion.getProceso();
 					this.noticia = "Obteniendo proceso al recibir novedad" + this.auxiliar.getNombre() + " "
 							+ this.auxiliar.getEstado();
-
+					
 					if (this.auxiliar.isBloqueado()) {
 						this.noticia = "BLOQUEADOO  " + this.auxiliar.getNombre();
 						this.bloqueo.anadirBloqueo(this.auxiliar);
+						this.refrescar = true;
 
 					} else if (this.auxiliar.isTerminado()) {
 						this.noticia = "Ha terminado";
 						this.procesosTerminado.agregar(this.auxiliar);
+						this.refrescar = true;
+
 					}
 					this.verificarDesbloqueados();
+					this.refrescar = true;
 				} else {
 					this.verificarDesbloqueados();
 					try {
@@ -134,6 +147,12 @@ public class Procesos implements Runnable {
 		this.noticia = "Terminado ejecucion";
 		this.ejecucion.terminar();
 
+	}
+	
+	
+
+	public void setRefrescar(boolean refrescar) {
+		this.refrescar = refrescar;
 	}
 
 	public Ejecucion getEjecucion() {
