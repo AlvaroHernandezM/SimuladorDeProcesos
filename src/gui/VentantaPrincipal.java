@@ -155,11 +155,9 @@ public class VentantaPrincipal extends JFrame implements Runnable {
 	}
 
 	public void refrescarActual() {
-//		if (!this.procesos.getEjecucion().isFinalizado()) {
-//			this.jLabelNombreActual.setText();
-		System.out.println("nombre  " + this.procesos.getEjecucion().getProceso().getNombre());
-//		}
-			
+		String[] infoProceso = this.procesos.getEjecucion().getInfoProceso.split("-");
+		this.jLabelNombreActual.setText(infoProceso[0]);
+		this.jLabelTiempoRestante.setText(infoProceso[1]);	
 	}
 
 	@Override
@@ -171,7 +169,7 @@ public class VentantaPrincipal extends JFrame implements Runnable {
 			if (this.procesos.refrescar) {
 				this.refrescarLista();
 				this.procesos.refrescar = false;
-//				this.refrescarActual();
+				this.refrescarActual();//Aui se refresca el proceso actual
 			}
 			try {
 				Thread.sleep(100);
