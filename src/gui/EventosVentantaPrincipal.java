@@ -32,8 +32,7 @@ public class EventosVentantaPrincipal implements ActionListener {
 			this.ventantaPrincipal.getThread().start();
 		}
 		if (e.getSource().equals(this.ventantaPrincipal.jButtonBloquear)) {
-			this.ventantaPrincipal.getBloqueo().anadirBloqueo(this.ventantaPrincipal.getProcesos().getEjecucion().getProceso());
-		}
+			this.ventantaPrincipal.getProcesos().getBloqueo().anadirBloqueo(this.ventantaPrincipal.getProcesos().getEjecucion().getProceso());		}
 	}
 
 }
