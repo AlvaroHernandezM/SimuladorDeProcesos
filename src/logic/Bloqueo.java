@@ -16,12 +16,34 @@ public class Bloqueo implements Runnable {
 		this.ejecutarHilo();
 	}
 
-	public void añadirBloqueo(Proceso proceso) {
+	public void anadirBloqueo(Proceso proceso) {
 
 		this.lista.agregar(proceso);
 		this.pausado = false;
 	}
+	
+	public ColaProcesos getBloqueados(){
+		ColaProcesos aux = new ColaProcesos();
+		for (int i = 0; i < this.lista.getTamano(); i++) {
 
+			if (this.lista.getProceso(i).isBloqueado()) {
+				aux.agregar(this.lista.getProceso(i));
+			}
+		}
+		return aux;
+	}
+
+	public boolean isVaciaBloqueados(){
+		ColaProcesos aux = new ColaProcesos();
+		for (int i = 0; i < this.lista.getTamano(); i++) {
+
+			if (this.lista.getProceso(i).isBloqueado()) {
+				aux.agregar(this.lista.getProceso(i));
+			}
+		}
+		return aux.isVacia();
+	}
+	
 	public ColaProcesos getDesbloqueados() {
 
 		for (int i = 0; i < this.lista.getTamano(); i++) {

@@ -65,8 +65,8 @@ public class Ejecucion implements Runnable {
 		this.finalizado = true;
 	}
 	
-	public String getNombre (){
-		return this.proceso.getNombre();
+	public String getInfoProceso (){
+		return this.proceso.getNombre()+"-"+this.proceso.getTiempoEjecucionR();
 	}
 
 	@Override

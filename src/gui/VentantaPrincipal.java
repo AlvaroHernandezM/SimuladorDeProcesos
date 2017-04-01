@@ -223,10 +223,6 @@ public class VentantaPrincipal extends JFrame implements Runnable {
 		this.procesos = procesos;
 	}
 
-	public static void main(String[] args) {
-		VentantaPrincipal principal = new VentantaPrincipal();
-		principal.setVisible(true);
-	}
 
 	public Thread getThread() {
 		return thread;

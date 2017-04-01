@@ -4,9 +4,9 @@ import gui.VentantaPrincipal;
 
 public class Procesos implements Runnable {
 
-	private ColaProcesos procesosListo, procesosBloqueado, procesosTerminado;
+	private ColaProcesos procesosListo, procesosTerminado;
 	private Ejecucion ejecucion; // ejecucion de proceso
-	private Proceso auxiliar; // proceso para el bloqueo
+	private Proceso auxiliar; // proceso para el bloqueoo terminado
 	private boolean pausado;
 	private Thread thread;
 	private int numProcesos; // numero de procesos ingresados
@@ -29,7 +29,6 @@ public class Procesos implements Runnable {
 
 		this.ejecucion = new Ejecucion();
 		this.bloqueo = new Bloqueo();
-		this.procesosBloqueado = new ColaProcesos();
 		this.procesosTerminado = new ColaProcesos();
 		this.pausado = false;
 		this.auxiliar = new Proceso();
@@ -57,7 +56,7 @@ public class Procesos implements Runnable {
 	 * @return
 	 */
 	private boolean isFinalizado() {
-		return this.procesosListo.isVacia() && this.procesosBloqueado.isVacia()
+		return this.procesosListo.isVacia() && this.bloqueo.isVaciaBloqueados()
 				&& (this.procesosTerminado.getTamano() == numProcesos);
 	}
 
@@ -70,6 +69,10 @@ public class Procesos implements Runnable {
 			this.noticia = "Se ha desbloqueado y agregado a listos " + (i + 1);
 		}
 		this.bloqueo.borrarDesbloqueados();
+	}
+	
+	public ColaProcesos getBloqueados(){
+		return this.bloqueo.getBloqueados();
 	}
 
 	@Override
@@ -106,7 +109,7 @@ public class Procesos implements Runnable {
 
 					if (this.auxiliar.isBloqueado()) {
 						this.noticia = "BLOQUEADOO  " + this.auxiliar.getNombre();
-						this.bloqueo.añadirBloqueo(this.auxiliar);
+						this.bloqueo.anadirBloqueo(this.auxiliar);
 
 					} else if (this.auxiliar.isTerminado()) {
 						this.noticia = "Ha terminado";
