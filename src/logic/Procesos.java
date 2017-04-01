@@ -143,4 +143,12 @@ public class Procesos implements Runnable {
 	public void setEjecucion(Ejecucion ejecucion) {
 		this.ejecucion = ejecucion;
 	}
+	
+	public Bloqueo getBloqueo() {
+		return this.bloqueo;
+	}
+
+	public void setBloqueo(Bloqueo bloqueo) {
+		this.bloqueo = bloqueo;
+	}
 }
