@@ -1,14 +1,15 @@
 package logic;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 
 public class ColaProcesos {
 
-	private ArrayDeque<Proceso> deque;
+	private ArrayList<Proceso> deque;
 
 	public ColaProcesos() {
 		super();
-		this.deque = new ArrayDeque<>();
+		this.deque = new ArrayList<>();
 	}
 	
 	public boolean agregar(Proceso proceso){
@@ -16,8 +17,10 @@ public class ColaProcesos {
 		return this.deque.add(proceso);
 	}
 	
-	public Proceso getProceso(){
-		return this.deque.remove();
+	public Proceso getProceso(int pos){
+		Proceso proceso = this.deque.get(pos); 
+		this.deque.remove(pos);
+		return proceso;
 	}
 	
 	public void clearAll(){
@@ -30,5 +33,13 @@ public class ColaProcesos {
 	
 	public boolean isVacia(){
 		return this.deque.isEmpty();
+	}
+
+	public ArrayList<Proceso> getDeque() {
+		return deque;
+	}
+
+	public void setDeque(ArrayList<Proceso> deque) {
+		this.deque = deque;
 	}
 }
