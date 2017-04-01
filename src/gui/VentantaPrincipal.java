@@ -13,6 +13,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import logic.Bloqueo;
 import logic.ColaProcesos;
 import logic.Procesos;
 
@@ -23,11 +24,12 @@ public class VentantaPrincipal extends JFrame implements Runnable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public JTextField jTextFieldNombre, jTextFieldTiempoDeEjecucion;
+	public JTextField jTextFieldNombre, jTextFieldTiempoDeEjecucion, jTextFieldTiempoBloqueo;
 
-	public JButton jButtonCrear, jButtonEjecutar;
+	public JButton jButtonCrear, jButtonEjecutar, jButtonBloquear;
 
-	public JLabel jLabelNoticia, jLabelNoticia2;
+	public JLabel jLabelNoticia, jLabelNoticia2, jLabelIdActual, jLabelNombreActual, jLabelTiempoRestante,
+			jLabelTiempoBloqueo;
 
 	private EventosVentantaPrincipal eventosVentantaPrincipal;
 
@@ -42,10 +44,14 @@ public class VentantaPrincipal extends JFrame implements Runnable {
 	private ColaProcesos colaProcesos;
 
 	private Procesos procesos;
+	
+	private Bloqueo bloqueo;
 
 	public VentantaPrincipal() {
 
 		this.colaProcesos = new ColaProcesos();
+		
+		this.bloqueo = new Bloqueo();
 
 		this.setTitle("Simulador de procesos");
 		this.setSize(900, 500);
@@ -55,16 +61,16 @@ public class VentantaPrincipal extends JFrame implements Runnable {
 
 		this.eventosVentantaPrincipal = new EventosVentantaPrincipal(this);
 
-		JPanel jPanelNorth = new JPanel(new GridLayout(1, 5));
-		jPanelNorth.setBorder(BorderFactory.createTitledBorder("Nuevo proceso"));
-		jPanelNorth.add(new JLabel("Nombre:", JLabel.CENTER));
-		jPanelNorth.add(this.jTextFieldNombre = new JTextField());
-		jPanelNorth.add(new JLabel("Tiempo de ejecuccion:", JLabel.CENTER));
-		jPanelNorth.add(this.jTextFieldTiempoDeEjecucion = new JTextField());
-		jPanelNorth.add(this.jButtonCrear = new JButton("Crear"));
+		JPanel jPanelNorthLeft = new JPanel(new GridLayout(1, 5));
+		jPanelNorthLeft.setBorder(BorderFactory.createTitledBorder("Nuevo proceso"));
+		jPanelNorthLeft.add(new JLabel("Nombre:", JLabel.CENTER));
+		jPanelNorthLeft.add(this.jTextFieldNombre = new JTextField());
+		jPanelNorthLeft.add(new JLabel("Tiempo de ejecuccion:", JLabel.CENTER));
+		jPanelNorthLeft.add(this.jTextFieldTiempoDeEjecucion = new JTextField());
+		jPanelNorthLeft.add(this.jButtonCrear = new JButton("Crear"));
 		this.jButtonCrear.addActionListener(this.eventosVentantaPrincipal);
 
-		this.add(jPanelNorth, BorderLayout.NORTH);
+		this.add(jPanelNorthLeft, BorderLayout.NORTH);
 
 		JPanel jPanelLeft = new JPanel(new BorderLayout());
 		jPanelLeft.setBorder(BorderFactory.createTitledBorder("Lista de procesos"));
@@ -88,6 +94,22 @@ public class VentantaPrincipal extends JFrame implements Runnable {
 		JPanel jPanelRight = new JPanel(new BorderLayout());
 		jPanelRight.setBorder(BorderFactory.createTitledBorder("Actual"));
 
+		JPanel jPanelRightNorth = new JPanel(new GridLayout(3, 2));
+		// jPanelRightNorth.add(new JLabel("Id", JLabel.CENTER));
+		// jPanelRightNorth.add(this.jLabelIdActual = new JLabel("",
+		// JLabel.CENTER));
+		jPanelRightNorth.add(new JLabel("Nombre", JLabel.CENTER));
+		jPanelRightNorth.add(this.jLabelNombreActual = new JLabel("", JLabel.CENTER));
+		jPanelRightNorth.add(new JLabel("Tiempo de ejecuccion restante (s)", JLabel.CENTER));
+		jPanelRightNorth.add(this.jLabelTiempoRestante = new JLabel("", JLabel.CENTER));
+		jPanelRightNorth.add(new JLabel("Tiempo de bloqueo", JLabel.CENTER));
+		jPanelRightNorth.add(this.jTextFieldTiempoBloqueo = new JTextField());
+
+		jPanelRight.add(jPanelRightNorth, BorderLayout.NORTH);
+
+		jPanelRight.add(this.jButtonBloquear = new JButton("Bloquear"), BorderLayout.SOUTH);
+		this.jButtonBloquear.addActionListener(this.eventosVentantaPrincipal);
+
 		JPanel jPanelCenter = new JPanel(new GridLayout(1, 2));
 		jPanelCenter.add(jPanelLeft);
 		jPanelCenter.add(jPanelRight);
@@ -108,12 +130,9 @@ public class VentantaPrincipal extends JFrame implements Runnable {
 	}
 
 	public void refrescarLista() {
-
-		for (int i = 0; i < this.defaultTableModel.getRowCount(); i++) {
+		for (int i = this.defaultTableModel.getRowCount() - 1; i >= 0; i--) {
 			this.defaultTableModel.removeRow(i);
 		}
-
-		this.repaint();
 
 		for (int i = 0; i < this.colaProcesos.getDeque().size(); i++) {
 
@@ -135,11 +154,32 @@ public class VentantaPrincipal extends JFrame implements Runnable {
 		this.repaint();
 	}
 
+	public void refrescarActual() {
+//		if (!this.procesos.getEjecucion().isFinalizado()) {
+//			this.jLabelNombreActual.setText();
+		System.out.println("nombre  " + this.procesos.getEjecucion().getProceso().getNombre());
+//		}
+			
+	}
+
 	@Override
 	public void run() {
 		while (this.estado) {
 			this.jLabelNoticia.setText(" " + this.procesos.noticia);
-			this.jLabelNoticia2.setText(this.procesos.getEjecucion().noticia + " ");
+			this.jLabelNoticia2.setText(
+					this.procesos.getEjecucion().noticia + " // " + this.procesos.getEjecucion().restante + " ");
+			if (this.procesos.refrescar) {
+				this.refrescarLista();
+				this.procesos.refrescar = false;
+//				this.refrescarActual();
+			}
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
 	}
 
@@ -194,6 +234,14 @@ public class VentantaPrincipal extends JFrame implements Runnable {
 
 	public void setThread(Thread thread) {
 		this.thread = thread;
+	}
+
+	public Bloqueo getBloqueo() {
+		return bloqueo;
+	}
+
+	public void setBloqueo(Bloqueo bloqueo) {
+		this.bloqueo = bloqueo;
 	}
 
 }

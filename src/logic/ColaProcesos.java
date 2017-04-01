@@ -1,6 +1,5 @@
 package logic;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 
 public class ColaProcesos {
@@ -12,19 +11,30 @@ public class ColaProcesos {
 		this.deque = new ArrayList<>();
 	}
 	
-	public boolean agregar(Proceso proceso){
-		System.out.println(proceso.getNombre()+" - "+proceso.getTiempoEjecucionR());
-		return this.deque.add(proceso);
+	public void  agregar(Proceso proceso){
+//		System.out.println(proceso.getNombre()+" - "+proceso.getTiempoEjecucionR());
+		 this.deque.add(proceso);
+	}
+	
+	
+	public Proceso getProceso(){
+		Proceso aux = this.deque.get(0);
+		this.deque.remove(0);
+		return aux;
 	}
 	
 	public Proceso getProceso(int pos){
-		Proceso proceso = this.deque.get(pos); 
-		this.deque.remove(pos);
-		return proceso;
+		return this.deque.get(pos);
 	}
+	
+	public void borrar (int pos){
+		this.deque.remove(pos);
+	}
+	
 	
 	public void clearAll(){
 		this.deque.clear();
+		System.out.println("Borrados: "+this.deque.size());
 	}
 	
 	public int getTamano(){
@@ -42,4 +52,6 @@ public class ColaProcesos {
 	public void setDeque(ArrayList<Proceso> deque) {
 		this.deque = deque;
 	}
+
+	
 }

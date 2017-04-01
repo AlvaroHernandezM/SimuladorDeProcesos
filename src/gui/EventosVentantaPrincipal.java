@@ -23,10 +23,16 @@ public class EventosVentantaPrincipal implements ActionListener {
 			this.ventantaPrincipal.refrescarLista();
 		}
 		if (e.getSource().equals(this.ventantaPrincipal.jButtonEjecutar)) {
-			this.ventantaPrincipal.setProcesos(new Procesos(this.ventantaPrincipal.getColaProcesos()));
+			Procesos procesos = new Procesos(this.ventantaPrincipal.getColaProcesos());
+			procesos.ventantaPrincipal= this.ventantaPrincipal;
+			this.ventantaPrincipal.setProcesos(procesos);
+			
 			this.ventantaPrincipal.estado = true;
 			this.ventantaPrincipal.jButtonEjecutar.setEnabled(false);
 			this.ventantaPrincipal.getThread().start();
+		}
+		if (e.getSource().equals(this.ventantaPrincipal.jButtonBloquear)) {
+			this.ventantaPrincipal.getBloqueo().añadirBloqueo(this.ventantaPrincipal.getProcesos().getEjecucion().getProceso());
 		}
 	}
 

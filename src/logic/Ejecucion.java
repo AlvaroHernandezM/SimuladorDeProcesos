@@ -6,7 +6,7 @@ public class Ejecucion implements Runnable {
 	private boolean pausado, finalizado;
 	private Thread thread;
 
-	public String noticia;
+	public String noticia, restante;
 
 	public Ejecucion() {
 		super();
@@ -64,6 +64,10 @@ public class Ejecucion implements Runnable {
 	public void terminar() {
 		this.finalizado = true;
 	}
+	
+	public String getNombre (){
+		return this.proceso.getNombre();
+	}
 
 	@Override
 	public void run() {
@@ -77,7 +81,7 @@ public class Ejecucion implements Runnable {
 						+ this.proceso.getTiempoEjecucionR();
 				while (!this.proceso.isBloqueado() && !this.proceso.isTerminado()) {
 					this.proceso.disminuirTiempoEjecucion();
-					this.noticia = "Tiempo restante: " + this.proceso.getTiempoEjecucionR();
+					this.restante = "Tiempo restante: " + this.proceso.getTiempoEjecucionR();
 					try {
 						Thread.sleep(1000); // 1 segundo
 					} catch (InterruptedException e) {
@@ -87,11 +91,32 @@ public class Ejecucion implements Runnable {
 			} else {
 				this.noticia = "Pausado";
 			}
+			try {
+				Thread.sleep(400); //1 segundo
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
 	private void ejecutarHilo() {
 		this.thread = new Thread(this);
 		this.thread.start();
+	}
+
+	public boolean isFinalizado() {
+		return finalizado;
+	}
+
+	public void setFinalizado(boolean finalizado) {
+		this.finalizado = finalizado;
+	}
+
+	public boolean isPausado() {
+		return pausado;
+	}
+
+	public void setPausado(boolean pausado) {
+		this.pausado = pausado;
 	}
 }

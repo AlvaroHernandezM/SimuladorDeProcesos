@@ -1,15 +1,22 @@
 package logic;
 
+import gui.VentantaPrincipal;
+
 public class Procesos implements Runnable {
 
 	private ColaProcesos procesosListo, procesosBloqueado, procesosTerminado;
-	private Ejecucion ejecucion;
-	private Proceso auxiliar;
+	private Ejecucion ejecucion; // ejecucion de proceso
+	private Proceso auxiliar; // proceso para el bloqueo
 	private boolean pausado;
 	private Thread thread;
 	private int numProcesos; // numero de procesos ingresados
 	// private int quantum; //tiempo de CPU dedicado para cada proceso
+	private Bloqueo bloqueo;
+	
 	public String noticia;
+	public VentantaPrincipal ventantaPrincipal;
+	
+	public boolean refrescar;
 
 	public Procesos(ColaProcesos procesosListo) {
 		super();
@@ -18,8 +25,10 @@ public class Procesos implements Runnable {
 															// numero de
 															// procesos
 		this.noticia = "";
+		this.refrescar = false;
 
 		this.ejecucion = new Ejecucion();
+		this.bloqueo = new Bloqueo();
 		this.procesosBloqueado = new ColaProcesos();
 		this.procesosTerminado = new ColaProcesos();
 		this.pausado = false;
@@ -52,29 +61,68 @@ public class Procesos implements Runnable {
 				&& (this.procesosTerminado.getTamano() == numProcesos);
 	}
 
+	private void verificarDesbloqueados() {
+
+		ColaProcesos aux = this.bloqueo.getDesbloqueados();
+		this.noticia = "TAMANoOOOO2:" + aux.getTamano();
+		for (int i = 0; i < aux.getTamano(); i++) {
+			this.procesosListo.agregar(aux.getProceso(i));
+			this.noticia = "Se ha desbloqueado y agregado a listos " + (i + 1);
+		}
+		this.bloqueo.borrarDesbloqueados();
+	}
+
 	@Override
 	public void run() {
+
 		while (!isFinalizado()) {
+
 			if (!pausado) {
-				this.ejecucion.agregarProceso(this.procesosListo.getProceso(0));
-				this.noticia = "Extraccion proceso listo";
-				while (!this.ejecucion.algunaNovedad()) {
-					this.noticia = "Sigue en ejecucion - Esperando novedad";
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+				if (!this.procesosListo.isVacia()) {
+					this.ejecucion.agregarProceso(this.procesosListo.getProceso());
+					this.noticia = "Extraccion proceso listo";
+					
+					this.refrescar = true;
+					
+					while (!this.ejecucion.algunaNovedad()) {
+						this.verificarDesbloqueados();
+						this.noticia = "Sigue en ejecucion - Esperando novedad";
+						// if (this.ejecucion.getNombre().equals("p2")){
+						// this.ejecucion.bloquear(3);
+						// }
+						// if (this.ejecucion.getNombre().equals("p4")){
+						// this.ejecucion.bloquear(10);
+						// }
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							this.noticia = e.getMessage();
+						}
 					}
+
+					this.auxiliar = this.ejecucion.getProceso();
+					this.noticia = "Obteniendo proceso al recibir novedad" + this.auxiliar.getNombre() + " "
+							+ this.auxiliar.getEstado();
+
+					if (this.auxiliar.isBloqueado()) {
+						this.noticia = "BLOQUEADOO  " + this.auxiliar.getNombre();
+						this.bloqueo.añadirBloqueo(this.auxiliar);
+
+					} else if (this.auxiliar.isTerminado()) {
+						this.noticia = "Ha terminado";
+						this.procesosTerminado.agregar(this.auxiliar);
+					}
+					this.verificarDesbloqueados();
+				} else {
+					this.verificarDesbloqueados();
+					try {
+						Thread.sleep(400);
+					} catch (Exception e) {
+						this.noticia = e.getMessage();
+					}
+
 				}
-				this.auxiliar = this.ejecucion.getProceso();
-				this.noticia = "Obteniendo proceso al recibir novedad";
-				if (this.auxiliar.isBloqueado()) {
-					this.noticia = "BLOQUEAR"; // aca va la parte de bloquear
-												// que falta
-				} else if (this.auxiliar.isTerminado()) {
-					this.noticia = "A terminado";
-					this.procesosTerminado.agregar(this.auxiliar);
-				}
+
 			} else {
 				this.ejecucion.pausar();
 				this.noticia = "Pausado ejecucion";
@@ -82,6 +130,7 @@ public class Procesos implements Runnable {
 		}
 		this.noticia = "Terminado ejecucion";
 		this.ejecucion.terminar();
+
 	}
 
 	public Ejecucion getEjecucion() {
@@ -91,5 +140,4 @@ public class Procesos implements Runnable {
 	public void setEjecucion(Ejecucion ejecucion) {
 		this.ejecucion = ejecucion;
 	}
-
 }
