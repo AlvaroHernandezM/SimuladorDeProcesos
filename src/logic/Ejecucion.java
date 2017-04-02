@@ -2,121 +2,131 @@ package logic;
 
 public class Ejecucion implements Runnable {
 
-	private Proceso proceso;
-	private boolean pausado, finalizado;
-	private Thread thread;
+    private Proceso proceso;
+    private boolean pausado, finalizado;
+    private Thread thread;
 
-	public String noticia, restante;
+    public String noticia, restante;
 
-	public Ejecucion() {
-		super();
-		this.pausado = true;
-		this.finalizado = false;
+    public Ejecucion() {
+        super();
+        this.pausado = true;
+        this.finalizado = false;
 
-		this.noticia = "";
+        this.noticia = "";
 
-		this.ejecutarHilo();
-	}
+        this.ejecutarHilo();
+    }
 
-	public Ejecucion(Proceso proceso) {
-		super();
-		this.proceso = proceso;
-		this.pausado = false;
-		this.finalizado = false;
+    public Ejecucion(Proceso proceso) {
+        super();
+        this.proceso = proceso;
+        this.pausado = false;
+        this.finalizado = false;
 
-		this.ejecutarHilo();
-	}
+        this.ejecutarHilo();
+    }
 
-	public Proceso getProceso() {
-		this.pausado = true;
-		return proceso;
-	}
+    public Proceso getProceso() {
+        this.pausado = true;
+        return proceso;
+    }
 
-	public void agregarProceso(Proceso proceso) {
-		this.proceso = proceso;
-		this.pausado = false;
-		this.noticia = "agregado el proceso: " + this.pausado;
-	}
+    public String getInfoProceso() {
+        return this.proceso.getNombre() + "-" + this.proceso.getTiempoEjecucionR();
+    }
 
-	/**
-	 * metodo para avisar de un bloque, pero se limita a solo cambiar el estado
-	 * del proceso.
-	 * 
-	 * @param tiempo
-	 */
-	public void bloquear(int tiempo) {
-		this.proceso.esperarSuceso(tiempo);
-		this.pausado = true;
-	}
+    public void agregarProceso(Proceso proceso) {
+        this.proceso = proceso;
+        this.pausado = false;
+        this.noticia = "agregado el proceso: " + this.getNombre();
+    }
 
-	/**
-	 * @return retorna true cuando el proceso ha sido bloqueado externamente o
-	 *         termino su tiepo de ejecucion
-	 */
-	public boolean algunaNovedad() {
-		return this.proceso.isBloqueado() || this.proceso.isTerminado();
-	}
+    /**
+     * metodo para avisar de un bloque, pero se limita a solo cambiar el estado
+     * del proceso.
+     *
+     * @param tiempo
+     */
+    public void bloquear(int tiempo) {
+        this.proceso.esperarSuceso(tiempo);
+        this.pausado = true;
+    }
 
-	public void pausar() {
-		this.pausado = true;
-	}
+    /**
+     * @return retorna true cuando el proceso ha sido bloqueado externamente o
+     * termino su tiepo de ejecucion
+     */
+    public boolean algunaNovedad() {
+        return this.proceso.isBloqueado() || this.proceso.isTerminado();
+    }
 
-	public void terminar() {
-		this.finalizado = true;
-	}
-	
-	public String getInfoProceso (){
-		return this.proceso.getNombre()+"-"+this.proceso.getTiempoEjecucionR();
-	}
+    public void pausar() {
+        this.pausado = true;
+    }
 
-	@Override
-	public void run() {
-		this.noticia = "Inicio hilo Ejecucion";
-		while (!this.finalizado) {
-			this.noticia = "Esperando";
-			if (!this.pausado) {
-				this.noticia = "Sin pausa";
-				this.proceso.admitir();
-				this.noticia = "Proceso adminitido: " + this.proceso.getNombre() + " - "
-						+ this.proceso.getTiempoEjecucionR();
-				while (!this.proceso.isBloqueado() && !this.proceso.isTerminado()) {
-					this.proceso.disminuirTiempoEjecucion();
-					this.restante = "Tiempo restante: " + this.proceso.getTiempoEjecucionR();
-					try {
-						Thread.sleep(1000); // 1 segundo
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			} else {
-				this.noticia = "Pausado";
-			}
-			try {
-				Thread.sleep(400); //1 segundo
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+    public void terminar() {
+        this.finalizado = true;
+    }
 
-	private void ejecutarHilo() {
-		this.thread = new Thread(this);
-		this.thread.start();
-	}
+    public String getNombre() {
+        return this.proceso.getNombre();
+    }
 
-	public boolean isFinalizado() {
-		return finalizado;
-	}
+    @Override
+    public void run() {
+        this.noticia = "Inicio hilo Ejecucion";
+        while (!this.finalizado) {
+            this.noticia = "SSsperando";
+            if (!this.pausado) {
+                this.noticia = "Sin pausa";
+                System.err.println(noticia);
+                this.proceso.admitir();
+                this.noticia = "Proceso adminitido: " + this.proceso.getNombre() + " - "
+                        + this.proceso.getTiempoEjecucionR();
+                while (!this.proceso.isBloqueado() && !this.proceso.isTerminado()) {
+                    this.proceso.disminuirTiempoEjecucion();
+                    this.restante = "Tiempo restante: " + this.proceso.getTiempoEjecucionR();
+                    try {
+                        Thread.sleep(1000); // 1 segundo
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                System.err.println("pausa");
+                this.noticia = "Pausado";
+            }
+            try {
+                Thread.sleep(400); //1 segundo
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-	public void setFinalizado(boolean finalizado) {
-		this.finalizado = finalizado;
-	}
+    private void ejecutarHilo() {
+        this.thread = new Thread(this);
+        this.thread.start();
+    }
 
-	public boolean isPausado() {
-		return pausado;
-	}
+    public Thread getThread() {
+        return thread;
+    }
 
-	public void setPausado(boolean pausado) {
-		this.pausado = pausado;
-	}
+    public boolean isFinalizado() {
+        return finalizado;
+    }
+
+    public void setFinalizado(boolean finalizado) {
+        this.finalizado = finalizado;
+    }
+
+    public boolean isPausado() {
+        return pausado;
+    }
+
+    public void setPausado(boolean pausado) {
+        this.pausado = pausado;
+    }
 }
