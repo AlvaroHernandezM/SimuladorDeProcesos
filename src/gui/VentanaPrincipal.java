@@ -548,7 +548,7 @@ public class VentanaPrincipal extends JFrame {
         );
 
         jButtonAnadirProceso.setBackground(new java.awt.Color(255, 255, 255));
-        jButtonAnadirProceso.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/process2.png"))); // NOI18N
+        jButtonAnadirProceso.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/plus (3).png"))); // NOI18N
         jButtonAnadirProceso.setToolTipText("crear Proceso");
 
         jButtonAcercaDe.setBackground(new java.awt.Color(255, 255, 255));
@@ -556,11 +556,11 @@ public class VentanaPrincipal extends JFrame {
         jButtonAcercaDe.setToolTipText("Créditos");
 
         jButtonPausar.setBackground(new java.awt.Color(255, 255, 255));
-        jButtonPausar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/stop (1).png"))); // NOI18N
+        jButtonPausar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/pause-button.png"))); // NOI18N
         jButtonPausar.setToolTipText("Pausar Ejecución");
 
         jButtonReanudar.setBackground(new java.awt.Color(255, 255, 255));
-        jButtonReanudar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/media-end (1).png"))); // NOI18N
+        jButtonReanudar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/play-button.png"))); // NOI18N
         jButtonReanudar.setToolTipText("Reanudar Ejecución");
 
         jMenu1.setText("Opciones");

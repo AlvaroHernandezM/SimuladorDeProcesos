@@ -792,7 +792,7 @@
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
         </Property>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/images/process2.png"/>
+          <Image iconType="3" name="/images/plus (3).png"/>
         </Property>
         <Property name="toolTipText" type="java.lang.String" value="crear Proceso"/>
       </Properties>
@@ -814,7 +814,7 @@
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
         </Property>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/images/stop (1).png"/>
+          <Image iconType="3" name="/images/pause-button.png"/>
         </Property>
         <Property name="toolTipText" type="java.lang.String" value="Pausar Ejecuci&#xf3;n"/>
       </Properties>
@@ -825,7 +825,7 @@
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
         </Property>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/images/media-end (1).png"/>
+          <Image iconType="3" name="/images/play-button.png"/>
         </Property>
         <Property name="toolTipText" type="java.lang.String" value="Reanudar Ejecuci&#xf3;n"/>
       </Properties>
