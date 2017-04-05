@@ -122,7 +122,7 @@ public class Bloqueo implements Runnable {
         this.thread.start();
     }
     /**
-     * @return el hilo en ejecución
+     * @return el hilo en ejecucion
      */
     public Thread getThread() {
         return thread;

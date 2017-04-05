@@ -4,9 +4,16 @@ import logic.ColaProcesos;
 import logic.Proceso;
 import logic.Procesos;
 
+/**
+ * Clase de pruebas de bloqueo.
+ * @author 
+ */
 public class TestBloqueo {
 
-	
+	/**
+         * Pruebas de bloqueo
+         * @param args 
+         */
 	public static void main(String[] args) {
 		
 		//CASO DE PRUEBA 1 - INICIA EN 10, EJECUTA 5 s Y LO BLOQUEAN 3, LUEGO TERMINA DE EJECUTAR Y MUESTRA TOTAL ** OK (FUNCIONANDO)

@@ -1,8 +1,16 @@
 package edu.controller;
 
-
+/**
+ *
+ * Clase encargada de manejar las constantes relacionadas con los eventos de
+ * los componentes graficos.
+ *
+ * @author - SO2017
+ *
+ *
+ */
 public class Constants {
-    
+
     public static final String OP_SALIR = "OP_SALIR";
     public static final String OP_ACERCADE = "OP_ACERCADE";
     public static final String CLICK_CREAR = "CLICK_CREAR";

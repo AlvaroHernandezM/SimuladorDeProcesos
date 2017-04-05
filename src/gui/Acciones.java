@@ -13,10 +13,20 @@ public class Acciones {
 
     private ColaProcesos colaProcesos;
 
+    /**
+     * Constructor recibiendo la cola de procesos.
+     *
+     * @param cp
+     */
     public Acciones(ColaProcesos cp) {
         this.colaProcesos = cp;
     }
 
+    /**
+     * permite actualizar la tabla de procesos.
+     *
+     * @param dtm
+     */
     public void actualizarTabla(DefaultTableModel dtm) {
 
         this.removerTabla(dtm);
@@ -49,6 +59,13 @@ public class Acciones {
         }
     }
 
+    /**
+     * Agrega los procesos bloqueados a la tabla.
+     *
+     * @param dtm
+     * @param terminados
+     * @param procesos
+     */
     public void procesosBloqueados(DefaultTableModel dtm, boolean terminados, Procesos procesos) {
         if (terminados) {
             for (int i = 0; i < procesos.getBloqueados().getTamano(); i++) {
@@ -66,13 +83,13 @@ public class Acciones {
             }
         }
     }
-        /**
-         * Actualiza los procesos terminados en la tabla.
-         *
-         * @param dtm
-         * @param terminados
-         * @param procesos
-         */
+
+    /**
+     * Permite actualizar los procesos terminados en la tabla.
+     * @param dtm
+     * @param terminados
+     * @param procesos
+     */
     public void procesosTerminados(DefaultTableModel dtm, boolean terminados, Procesos procesos) {
 
         if (terminados) {

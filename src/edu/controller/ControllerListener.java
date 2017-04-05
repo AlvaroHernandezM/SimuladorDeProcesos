@@ -13,9 +13,9 @@ import logic.Proceso;
 import logic.Procesos;
 
 /**
- * Control Logica-Intefaz.
+ * Clase encargada de controlar y unir la parte grafica con la logica
  *
- * @author¿
+ * @author - SO2017
  */
 public class ControllerListener implements ActionListener, Runnable {
 
@@ -29,6 +29,9 @@ public class ControllerListener implements ActionListener, Runnable {
     private Thread thread;
     private boolean estado, terminados;
 
+    /**
+     * Constructor
+     */
     public ControllerListener() {
         this.restricciones = new Restricciones();
         this.colaProcesos = new ColaProcesos();
@@ -38,6 +41,9 @@ public class ControllerListener implements ActionListener, Runnable {
         this.terminados = false;
     }
 
+    /**
+     * Abrir la ventana principal de la aplicacion.
+     */
     public void abrirVentanaPrincipal() {
         if (this.ventanaPrincipal == null) {
             this.ventanaPrincipal = new VentanaPrincipal(this);
@@ -46,11 +52,17 @@ public class ControllerListener implements ActionListener, Runnable {
         }
     }
 
+    /**
+     * Abrir dialogo para crear un nuevo proceso.
+     */
     public void abrirVentanaProceso() {
         this.jDcrearProceso = new JDcrearProceso(ventanaPrincipal, this);
         this.jDcrearProceso.setVisible(true);
     }
 
+    /**
+     * Abrir ventana de los creditos de la aplicacion.
+     */
     public void abrirVentanaAcercaDe() {
         this.jDacercaDe = new JDacercaDe(ventanaPrincipal, this);
         this.jDacercaDe.setVisible(true);
@@ -70,6 +82,10 @@ public class ControllerListener implements ActionListener, Runnable {
         }
     }
 
+    /**
+     * Crear un proceso desde la ventana principal haciendo uso de las
+     * restricciones correspondientes.
+     */
     public void crearProceso() {
         JTextField nombre = this.ventanaPrincipal.getCampoNombreProceso();
         JTextField tiempo = this.ventanaPrincipal.getCampoTiempoProceso();
@@ -81,6 +97,10 @@ public class ControllerListener implements ActionListener, Runnable {
         }
     }
 
+    /**
+     * ejecuta un proceso y lo coloca en funcionamiento (de listo pasa a
+     * ejecucion).
+     */
     public void ejecutarProceso() {
         if (this.restricciones.verEstadoCola(this.ventanaPrincipal, colaProcesos)) {
             this.procesos = new Procesos(this.colaProcesos);
@@ -92,6 +112,10 @@ public class ControllerListener implements ActionListener, Runnable {
 
     }
 
+    /**
+     * Bloquea un proceso si este se encuentra en ejecucion haciendo uso de las
+     * restricciones.
+     */
     public void bloquearProceso() {
         JTextField campoBloqueo = this.ventanaPrincipal.getCampoBloqueo();
         if (this.restricciones.llenarTiempoBloqueo(this.ventanaPrincipal, campoBloqueo)
@@ -102,12 +126,19 @@ public class ControllerListener implements ActionListener, Runnable {
 
     }
 
+    /**
+     * Permite actualizar la tabla de los procesos creados.
+     */
     public void actualizarTabla() {
         this.acciones.actualizarTabla(this.ventanaPrincipal.getModeloTabla());
         this.acciones.procesosBloqueados(this.ventanaPrincipal.getModeloTabla(), this.terminados, procesos);
         this.acciones.procesosTerminados(this.ventanaPrincipal.getModeloTabla(), this.terminados, procesos);
     }
 
+    /**
+     * Permite actualizar el proceso que esta en ejecucion en el panel
+     * correspondiente a el panel de ejecucion.
+     */
     public void refrescarActual() {
         if (!this.procesos.isFinalizado()) {
             String[] infoProceso = this.procesos.getEjecucion().getInfoProceso().split("-");
@@ -120,6 +151,10 @@ public class ControllerListener implements ActionListener, Runnable {
 
     }
 
+    /**
+     * Permite pausar la ejecucion de los procesos llevados acabo. en general
+     * pausar la aplicacion.
+     */
     public void pausarEjecucion() {
         if (this.restricciones.pausarEjecucion(this.ventanaPrincipal, colaProcesos)) {
             try {
@@ -135,6 +170,9 @@ public class ControllerListener implements ActionListener, Runnable {
 
     }
 
+    /**
+     * Permite reanudar la aplicacion si se encuentra pausada.
+     */
     public void reanudarEjecucion() {
         if (restricciones.reanudarEjecucion(ventanaPrincipal, this.ventanaPrincipal.getjButtonPausar())) {
 
@@ -151,6 +189,12 @@ public class ControllerListener implements ActionListener, Runnable {
 
     }
 
+    /**
+     * manejo de las acciones que deben seguir los componentes graficos frente a
+     * una eventualidad.
+     *
+     * @param e
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
 
@@ -195,6 +239,9 @@ public class ControllerListener implements ActionListener, Runnable {
         }
     }
 
+    /**
+     * Hilo general de ejecucion de la aplicacion.
+     */
     @Override
     public void run() {
 

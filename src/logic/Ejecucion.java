@@ -1,10 +1,10 @@
 package logic;
 
 /**
- * @author - SO2017
  * Clase encargada de mantener un solo
- * proceso en ejecución con sus 
+ * proceso en ejecucion con sus 
  * distintas operaciones
+ * @author - SO2017
  */
 public class Ejecucion implements Runnable {
 

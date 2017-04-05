@@ -6,10 +6,23 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JTextField;
 
+/**
+ * Clase correspondiente a un dialogo cuya funcionalidad es permitir crear un
+ * nuevo proceso.
+ *
+ * @author - SO2017
+ */
 public class JDcrearProceso extends JDialog {
 
     private ControllerListener controllerListener;
 
+    /**
+     * Constructor con parametros como la clase controladora, y el frame para el
+     * ajuste de su aparacion cuando se hace visible.
+     *
+     * @param parent
+     * @param ln
+     */
     public JDcrearProceso(JFrame parent, ControllerListener ln) {
         super(parent, true);
         this.setSize(400, 430);
@@ -22,20 +35,36 @@ public class JDcrearProceso extends JDialog {
 
     }
 
+    /**
+     * Operacion para confirmar la operacion de crear proceso.
+     */
     public void aceptarCrear() {
         this.jButtonAceptar.addActionListener(controllerListener);
         this.jButtonAceptar.setActionCommand(Constants.CLICK_CREAR_DIALOGO);
     }
 
+    /**
+     * Operacion para cerrar el dialogo.
+     */
     public void cerrarDialogo() {
         this.jButtonCancelar.addActionListener(controllerListener);
         this.jButtonCancelar.setActionCommand(Constants.CERRAR_DIALOGO_CREAR);
     }
 
+    /**
+     * Retorno de el campo correspondiente al nombre establecido del proceso.
+     *
+     * @return
+     */
     public JTextField getFieldNombre() {
         return this.jTextFieldNombre;
     }
 
+    /**
+     * Retorno de el campo correspondiente al tiempo establecido del proceso.
+     *
+     * @return
+     */
     public JTextField getTiempo() {
         return this.jTextFieldTiempo;
     }

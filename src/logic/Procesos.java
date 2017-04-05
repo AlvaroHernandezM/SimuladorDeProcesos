@@ -1,9 +1,10 @@
 package logic;
 
 /**
+ * Clase encargada de estar actualizando las respectivas listas para los
+ * procesos listos, blosqueados y terminados
+ *
  * @author - SO2017
- *	Clase encargada de estar actualizando las respectivas listas
- *para los procesos listos, blosqueados y terminados
  */
 public class Procesos implements Runnable {
 
@@ -20,12 +21,13 @@ public class Procesos implements Runnable {
 
     /**
      * constuctor
+     *
      * @param procesosListo para entrar a realizar las operaciones
      */
     public Procesos(ColaProcesos procesosListo) {
         super();
         this.procesosListo = procesosListo;
-        this.numProcesos = this.procesosListo.getTamano(); 
+        this.numProcesos = this.procesosListo.getTamano();
         this.noticia = "";
         this.refrescar = false;
         this.ejecucion = new Ejecucion();
@@ -36,6 +38,7 @@ public class Procesos implements Runnable {
         this.auxiliar = new Proceso();
         this.ejecutar();
     }
+
     /**
      * bloquea el proceso que se encuentra en ejecucion, asignandole el tiempo
      *
@@ -45,6 +48,7 @@ public class Procesos implements Runnable {
         this.ejecucion.bloquear(tiempo);
         this.refrescar = true;
     }
+
     /**
      * el hilo debe acabarse cuando la proceso de listos y bloqueados este
      * vacia, y el numero de procesos terminado sea igual al numero de procesos
@@ -55,9 +59,9 @@ public class Procesos implements Runnable {
         return this.procesosListo.isVacia() && this.procesosBloqueado.isVacia()
                 && (this.procesosTerminado.getTamano() == numProcesos);
     }
+
     /**
-     * Verifica que ya hayan desbloqueados desde la
-     * Clase Bloqueo 
+     * Verifica que ya hayan desbloqueados desde la Clase Bloqueo
      */
     private void verificarDesbloqueados() {
 
@@ -74,20 +78,25 @@ public class Procesos implements Runnable {
         }
 
     }
+
     /**
      * obtiene bloqeuados
+     *
      * @return lista de bloqueados
      */
     public ColaProcesos getBloqueados() {
         return this.bloqueo.getBloqueados();
     }
+
     /**
      * obtiene terminados
+     *
      * @return lista de terminados
      */
     public ColaProcesos getTerminados() {
         return this.procesosTerminado;
     }
+
     @Override
     public void run() {
         while (!isFinalizado()) {
@@ -139,53 +148,66 @@ public class Procesos implements Runnable {
         this.bloqueo.terminar();
         System.out.println("ha terminadooooooo");
     }
+
     /**
-     *Ejecutar hilo 
+     * Ejecutar hilo
      */
     private void ejecutar() {
         thread = new Thread(this);
         thread.start();
     }
+
     /**
      * obtiendo ejecucion
+     *
      * @return
      */
     public Ejecucion getEjecucion() {
         return ejecucion;
     }
+
     /**
      * asignar ejecucion
-     * @param ejecucion 
+     *
+     * @param ejecucion
      */
     public void setEjecucion(Ejecucion ejecucion) {
         this.ejecucion = ejecucion;
     }
+
     /**
      * asignar pausa
+     *
      * @param pausa true o false
      */
-    public void setPausa (boolean pausa){
+    public void setPausa(boolean pausa) {
         this.pausado = pausa;
-    }   
+    }
+
     /**
      * obtener valor de pausa
+     *
      * @return true o false
      */
-    public boolean getPausa (){
+    public boolean getPausa() {
         return this.pausado;
     }
+
     /**
      * conocer clase bloqueo
+     *
      * @return Bloqueo
      */
     public Bloqueo getBloqueo() {
         return bloqueo;
     }
+
     /**
      * retorn hilo
+     *
      * @return Thread
      */
     public Thread getThread() {
         return thread;
-    }   
+    }
 }

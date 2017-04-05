@@ -10,9 +10,10 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 /**
- * Ventana principal de la aplicacion.
+ * Clase que maneja la ventana Principal de la aplicacion con todos los
+ * componentes graficos.
  *
- * @author ffg
+ * @author
  */
 public class VentanaPrincipal extends JFrame {
 
@@ -21,6 +22,11 @@ public class VentanaPrincipal extends JFrame {
     private Eventos eventos;
     private Timer timer;
 
+    /**
+     * Constructor con parametro la clase controladora.
+     *
+     * @param listener
+     */
     public VentanaPrincipal(ControllerListener listener) {
         //Graficos
         initComponents();
@@ -47,43 +53,91 @@ public class VentanaPrincipal extends JFrame {
 
     }
 
-    //GETTERS
+    /**
+     * retorna el modelo de la tabla.
+     *
+     * @return
+     */
     public DefaultTableModel getModeloTabla() {
         return defaultTableModel;
     }
 
+    /**
+     * Retorna el campo de nombre de proceso.
+     *
+     * @return
+     */
     public JTextField getCampoNombreProceso() {
         return jTFnombreProceso;
     }
 
+    /**
+     * retorna el campo de tiempo de proceso.
+     *
+     * @return
+     */
     public JTextField getCampoTiempoProceso() {
         return jTFtiempoProceso;
     }
 
+    /**
+     * Retorna el boton de ejecutar procesos.
+     *
+     * @return
+     */
     public JButton getBotonEjecutar() {
         return jButtonEjecutar;
     }
 
+    /**
+     * Retorna el campo del nombre del proceso que se encuentra en ejecucion.
+     *
+     * @return
+     */
     public JTextField getCampoNombreEjecucion() {
         return jTFnombreEjecucion;
     }
 
+    /**
+     * Retorna el campo del tiempo restante del proceso que se encuentra en
+     * ejecucion.
+     *
+     * @return
+     */
     public JTextField getCampoTiempoRestante() {
         return jTFtiempoRestante;
     }
 
+    /**
+     * Retorna el campo correspondiente al tiempo de bloqueo.
+     *
+     * @return
+     */
     public JTextField getCampoBloqueo() {
         return jTFtiempoBloqueo;
     }
 
+    /**
+     * retorna el boton de pausar aplicacion.
+     *
+     * @return
+     */
     public JButton getjButtonPausar() {
         return jButtonPausar;
     }
 
+    /**
+     * Retorna el boton correspondiente a reanudar aplicacion.
+     *
+     * @return
+     */
     public JButton getjButtonReanudar() {
         return jButtonReanudar;
     }
 
+    /**
+     * Permite establecer el ancho de las columnas de la tabla de procesos.
+     */
     public void cuadrarColumnas() {
         TableColumnModel columnModel = this.jTableDatos.getColumnModel();
         columnModel.getColumn(0).setPreferredWidth(50);
@@ -640,7 +694,11 @@ public class VentanaPrincipal extends JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+/**
+     * Permite aceptar solo digitos en el campo de tiempo de proceso.
+     *
+     * @param evt
+     */
     private void jTFtiempoProcesoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTFtiempoProcesoKeyTyped
         char caracter = evt.getKeyChar();
 
@@ -651,7 +709,11 @@ public class VentanaPrincipal extends JFrame {
             evt.consume();  // ignorar el evento de teclado
         }
     }//GEN-LAST:event_jTFtiempoProcesoKeyTyped
-
+    /**
+     * Permite aceptar solo digitos en el campo de quantum de proceso.
+     *
+     * @param evt
+     */
     private void jTFQuantumCPUKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTFQuantumCPUKeyTyped
         char caracter = evt.getKeyChar();
 
@@ -662,7 +724,12 @@ public class VentanaPrincipal extends JFrame {
             evt.consume();  // ignorar el evento de teclado
         }
     }//GEN-LAST:event_jTFQuantumCPUKeyTyped
-
+    /**
+     * Permite aceptar solo digitos en el campo de bloqueo de proceso en
+     * ejecucion.
+     *
+     * @param evt
+     */
     private void jTFtiempoBloqueoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTFtiempoBloqueoKeyTyped
         char caracter = evt.getKeyChar();
 
@@ -673,7 +740,11 @@ public class VentanaPrincipal extends JFrame {
             evt.consume();  // ignorar el evento de teclado
         }
     }//GEN-LAST:event_jTFtiempoBloqueoKeyTyped
-
+    /**
+     * Permite establecer el nuevo cronometro de la aplicacion.
+     *
+     * @param evt
+     */
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         timer = new Timer(1000, new Cronometro(jlsegungos, jlabelMinutos));
         timer.start();

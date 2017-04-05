@@ -4,6 +4,10 @@ import logic.ColaProcesos;
 import logic.Proceso;
 import logic.Procesos;
 
+/**
+ * Clase de prueba de procesos2.
+ * @author
+ */
 public class TestProcesos {
 	
 	public static void main(String[] args) {

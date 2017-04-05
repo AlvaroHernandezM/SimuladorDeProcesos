@@ -2,6 +2,10 @@ package pruebas;
 
 import logic.Proceso;
 
+/**
+ * Clase de pruebas de procesos.
+ * @author 
+ */
 public class TestProceso {
 
 	
