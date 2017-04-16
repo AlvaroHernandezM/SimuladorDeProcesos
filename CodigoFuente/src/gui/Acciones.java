@@ -49,7 +49,7 @@ public class Acciones {
     }
 
     /**
-     * Remuve las filas de la tabla.
+     * Remueve las filas de la tabla.
      *
      * @param dtm
      */
