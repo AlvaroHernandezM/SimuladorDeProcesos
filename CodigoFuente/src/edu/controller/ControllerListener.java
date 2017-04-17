@@ -102,8 +102,14 @@ public class ControllerListener implements ActionListener, Runnable {
 	 * ejecucion).
 	 */
 	public void ejecutarProceso() {
-		if (this.restricciones.verEstadoCola(this.ventanaPrincipal, colaProcesos)) {
-			this.procesos = new Procesos(this.colaProcesos);
+		JTextField quantum = this.ventanaPrincipal.getjTFQuantumCPU();
+		JTextField quantumActual = this.ventanaPrincipal.getjTFQuantumActual();
+		if ((this.restricciones.verEstadoCola(this.ventanaPrincipal, colaProcesos))
+				&& (this.restricciones.restriccionesQuantum(this.ventanaPrincipal, quantum))) {
+			this.procesos = new Procesos(this.colaProcesos, Integer.parseInt(quantum.getText()));
+			quantumActual.setText(quantum.getText());
+			quantum.setText("");
+			quantum.setEnabled(false);
 			this.ventanaPrincipal.getBotonEjecutar().setEnabled(false);
 			this.estado = true;
 			this.terminados = true;
@@ -144,6 +150,7 @@ public class ControllerListener implements ActionListener, Runnable {
 			String[] infoProceso = this.procesos.getEjecucion().getInfoProceso().split("-");
 			this.ventanaPrincipal.getCampoNombreEjecucion().setText(infoProceso[0]);
 			this.ventanaPrincipal.getCampoTiempoRestante().setText(infoProceso[1]);
+			this.ventanaPrincipal.getjTextField4().setText(infoProceso[2]);
 		} else {
 			this.ventanaPrincipal.getCampoNombreEjecucion().setText(null);
 			this.ventanaPrincipal.getCampoTiempoRestante().setText(null);

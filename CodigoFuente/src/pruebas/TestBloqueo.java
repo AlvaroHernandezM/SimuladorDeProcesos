@@ -37,9 +37,9 @@ public class TestBloqueo {
 //		cp.agregar(p4);
 //		cp.agregar(p5);
 		
+		int quantumCPU = 5;
 		
-		
-		Procesos ps = new Procesos(cp);
+		Procesos ps = new Procesos(cp, quantumCPU);
 		
 	}
 }

@@ -136,6 +136,31 @@ public class VentanaPrincipal extends JFrame {
 	}
 
 	/**
+	 * Retorna el campo de texto correspondiente al Quantum del cpu.
+	 * 
+	 * @return {@link JTextField}
+	 */
+	public javax.swing.JTextField getjTFQuantumCPU() {
+		return jTFQuantumCPU;
+	}
+	
+	/**
+	 * Retorna el campo de texto correspondiente al Quantum actual.
+	 * @return
+	 */
+	public javax.swing.JTextField getjTFQuantumActual() {
+		return jTFQuantumActual;
+	}
+
+	/**
+	 * Retorna el campo correspontiente al quantum en ejecuccion.
+	 * @return
+	 */
+	public javax.swing.JTextField getjTextField4() {
+		return jTextField4;
+	}
+
+	/**
 	 * Permite establecer el ancho de las columnas de la tabla de procesos.
 	 */
 	public void cuadrarColumnas() {
@@ -307,7 +332,7 @@ public class VentanaPrincipal extends JFrame {
 			}
 		});
 
-		jTFQuantumActual.setEditable(true);
+		jTFQuantumActual.setEditable(false);
 
 		javax.swing.GroupLayout jPanelCuantumLayout = new javax.swing.GroupLayout(jPanelCuantum);
 		jPanelCuantum.setLayout(jPanelCuantumLayout);

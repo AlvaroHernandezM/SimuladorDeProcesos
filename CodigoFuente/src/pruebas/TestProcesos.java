@@ -32,7 +32,10 @@ public class TestProcesos {
 		colaProcesos.agregar(p3);
 		colaProcesos.agregar(p4);
 		colaProcesos.agregar(p5);
-		Procesos procesos = new Procesos(colaProcesos);
+		
+		int quantumCPU = 5;
+		
+		Procesos procesos = new Procesos(colaProcesos, quantumCPU);
 		
 
 	}
