@@ -1,5 +1,10 @@
 package logic;
 
+import java.util.ArrayList;
+import java.util.logging.Level;
+
+import com.sun.istack.internal.logging.Logger;
+
 /**
  * Clase encargada de estar actualizando las respectivas listas para los
  * procesos listos, blosqueados y terminados
@@ -8,63 +13,102 @@ package logic;
  */
 public class Procesos implements Runnable {
 
-	private ColaProcesos procesosListo, procesosBloqueado, procesosTerminado;
-	private Ejecucion ejecucion; // ejecucion de proceso
-	private Proceso auxiliar; // proceso para el bloqueo
+	private ColaProcesos procesosListo;
+	private ColaProcesos procesosBloqueado;
+	private ColaProcesos procesosTerminado;
+
+	private Proceso auxiliar; // Proceso para el bloqueo
+
 	private boolean pausado;
-	private Thread thread;
-	private int numProcesos; // numero de procesos ingresados
-	private int numeroProcesadores;// Numero de procesadores
-	// private int quantum; //tiempo de CPU dedicado para cada proceso
-	private Bloqueo bloqueo;
-	public String noticia;
 	public boolean refrescar;
 
+	private Thread thread;
+
+	private int numProcesos; // numero de procesos ingresados
+	private int numeroProcesadores;// Numero de procesadores
+	private int quantum; // Tiempo de CPU dedicado para cada proceso
+
+	private Bloqueo bloqueo;
+
+	public String noticia;
+
+	private Ejecucion ejecucion; // Ejecucion de proceso
+	private ArrayList<Ejecucion> procesadores;
+
+	private final static Logger LOGGER = Logger.getLogger(Procesos.class);
+
 	/**
-	 * constuctor
+	 * Constuctor
 	 *
 	 * @param procesosListo
 	 *            para entrar a realizar las operaciones
 	 */
 	public Procesos(ColaProcesos procesosListo) {
 		super();
+		
 		this.procesosListo = procesosListo;
 		this.numProcesos = this.procesosListo.getTamano();
+		
 		this.noticia = "";
 		this.refrescar = false;
-		this.ejecucion = new Ejecucion();
+		
+		// Si esta sin parametros solo existe un procesador osea 1
+		this.ejecucion = new Ejecucion(1);
 		this.bloqueo = new Bloqueo();
+		
 		this.procesosBloqueado = new ColaProcesos();
 		this.procesosTerminado = new ColaProcesos();
+		
 		this.pausado = false;
+		
 		this.auxiliar = new Proceso();
+		
 		this.ejecutar();
 	}
 
 	/**
-	 * constuctor
-	 *
+	 * Constructor, si el numero de procesarodes es igual a 1 el comportamiento
+	 * es igual al del simulador 1.
+	 * 
 	 * @param procesosListo
-	 *            para entrar a realizar las operaciones
+	 *            para entrar a realizar las operaciones.
+	 * @param numeroProcesadores
+	 *            con el que se va a realizar la simulacion.
 	 */
 	public Procesos(ColaProcesos procesosListo, int numeroProcesadores) {
 		super();
+
+		this.LOGGER.setLevel(Level.INFO);
+
 		this.procesosListo = procesosListo;
 		this.numeroProcesadores = numeroProcesadores;
+
+		if (this.numeroProcesadores == 1) {
+			this.ejecucion = new Ejecucion(this.numeroProcesadores);
+		} else {
+			this.procesadores = new ArrayList<Ejecucion>();
+			for (int i = 0; i < this.numeroProcesadores; i++) {
+				this.procesadores.add(new Ejecucion(i));
+			}
+		}
+
 		this.numProcesos = this.procesosListo.getTamano();
-		this.noticia = "";
+
 		this.refrescar = false;
-		this.ejecucion = new Ejecucion();
+		this.pausado = false;
+
 		this.bloqueo = new Bloqueo();
+
 		this.procesosBloqueado = new ColaProcesos();
 		this.procesosTerminado = new ColaProcesos();
-		this.pausado = false;
+
 		this.auxiliar = new Proceso();
+
 		this.ejecutar();
 	}
 
 	/**
-	 * bloquea el proceso que se encuentra en ejecucion, asignandole el tiempo
+	 * Bloquea el proceso que se encuentra en ejecucion, asignandole el tiempo
 	 *
 	 * @param tiempo
 	 */
@@ -74,7 +118,7 @@ public class Procesos implements Runnable {
 	}
 
 	/**
-	 * el hilo debe acabarse cuando la proceso de listos y bloqueados este
+	 * El hilo debe acabarse cuando la cola procesos de listos y bloqueados este
 	 * vacia, y el numero de procesos terminado sea igual al numero de procesos
 	 *
 	 * @return
@@ -104,7 +148,7 @@ public class Procesos implements Runnable {
 	}
 
 	/**
-	 * obtiene bloqeuados
+	 * Obtiene bloqueados
 	 *
 	 * @return lista de bloqueados
 	 */
@@ -113,7 +157,7 @@ public class Procesos implements Runnable {
 	}
 
 	/**
-	 * obtiene terminados
+	 * Obtiene terminados
 	 *
 	 * @return lista de terminados
 	 */
@@ -123,8 +167,8 @@ public class Procesos implements Runnable {
 
 	@Override
 	public void run() {
-		while (!isFinalizado()) {
-			if (!pausado) {
+		while (!this.isFinalizado()) {
+			if (!this.pausado) {
 				if (!this.procesosListo.isVacia()) {
 					this.ejecucion.agregarProceso(this.procesosListo.getProceso());
 					this.noticia = "Extraccion proceso listo";
@@ -177,12 +221,12 @@ public class Procesos implements Runnable {
 	 * Ejecutar hilo
 	 */
 	private void ejecutar() {
-		thread = new Thread(this);
-		thread.start();
+		this.thread = new Thread(this);
+		this.thread.start();
 	}
 
 	/**
-	 * obtiendo ejecucion
+	 * Obtiendo ejecucion
 	 *
 	 * @return
 	 */
@@ -191,7 +235,7 @@ public class Procesos implements Runnable {
 	}
 
 	/**
-	 * asignar ejecucion
+	 * Asignar ejecucion
 	 *
 	 * @param ejecucion
 	 */
@@ -200,7 +244,7 @@ public class Procesos implements Runnable {
 	}
 
 	/**
-	 * asignar pausa
+	 * Asignar pausa
 	 *
 	 * @param pausa
 	 *            true o false
@@ -210,7 +254,7 @@ public class Procesos implements Runnable {
 	}
 
 	/**
-	 * obtener valor de pausa
+	 * Obtener valor de pausa
 	 *
 	 * @return true o false
 	 */
@@ -219,7 +263,7 @@ public class Procesos implements Runnable {
 	}
 
 	/**
-	 * conocer clase bloqueo
+	 * Conocer clase bloqueo
 	 *
 	 * @return Bloqueo
 	 */
@@ -228,7 +272,7 @@ public class Procesos implements Runnable {
 	}
 
 	/**
-	 * retorn hilo
+	 * Return hilo
 	 *
 	 * @return Thread
 	 */
