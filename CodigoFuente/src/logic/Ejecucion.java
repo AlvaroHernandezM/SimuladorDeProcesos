@@ -9,8 +9,8 @@ import com.sun.istack.internal.logging.Logger;
  * @author - SO2017
  */
 public class Ejecucion implements Runnable {
-	
-	private int numeroProcesador;
+
+	private int idProcesador;
 
 	private Proceso proceso;
 
@@ -19,23 +19,26 @@ public class Ejecucion implements Runnable {
 	private Thread thread;
 
 	public String noticia, restante;
-	
-	private final static Logger LOGGER = Logger.getLogger(Procesos.class);
+
+	private final static Logger LOGGER = Logger.getLogger(Ejecucion.class);
 
 	/**
-	 * Constructor sin aprametros
+	 * Constructor sin parametros
 	 */
+	@SuppressWarnings("static-access")
 	public Ejecucion(int numeroProcesador) {
 		super();
-		
-		this.numeroProcesador = numeroProcesador;
-		
+
+		this.idProcesador = numeroProcesador;
+
 		this.proceso = null;
-		
+
 		this.pausado = true;
 		this.finalizado = false;
 
 		this.ejecutarHilo();
+
+		this.LOGGER.info("Procesador " + this.idProcesador + " funcionando.");
 	}
 
 	/**
@@ -76,11 +79,12 @@ public class Ejecucion implements Runnable {
 	 * 
 	 * @param proceso
 	 */
+	@SuppressWarnings("static-access")
 	public void agregarProceso(Proceso proceso) {
 		this.proceso = proceso;
 		if (this.pausado)
 			this.pausado = false;
-		this.LOGGER.info("Procesador " + this.numeroProcesador + ": agregado el proceso: " + this.getNombre());
+		this.LOGGER.info("Procesador " + this.idProcesador + ": agregado el proceso: " + this.getNombre());
 	}
 
 	/**
@@ -125,35 +129,41 @@ public class Ejecucion implements Runnable {
 		return this.proceso.getNombre();
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void run() {
-		this.noticia = "Inicio hilo Ejecucion";
+		boolean avisoLogger = false;
 		while (!this.finalizado) {
-			this.noticia = "SSsperando";
 			if (!this.pausado) {
-				this.noticia = "Sin pausa";
-				System.err.println(noticia);
+
 				this.proceso.admitir();
-				this.noticia = "Proceso adminitido: " + this.proceso.getNombre() + " - "
-						+ this.proceso.getTiempoEjecucionR();
+				avisoLogger = false;
+
 				while (!this.proceso.isBloqueado() && !this.proceso.isTerminado()) {
+
 					this.proceso.disminuirTiempoEjecucion();
-					this.restante = "Tiempo restante: " + this.proceso.getTiempoEjecucionR();
-					try {
-						Thread.sleep(1000); // 1 segundo
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+//					this.restante = "Tiempo restante: " + this.proceso.getTiempoEjecucionR();
+//					System.out.println("Procesador " + this.idProcesador + " " + this.restante);
+					this.delay(1000);
 				}
 			} else {
-				System.err.println("pausa");
-				this.noticia = "Pausado";
+				if (avisoLogger == false) {
+					avisoLogger = true;
+					this.LOGGER.info("Procesador " + this.idProcesador + " en ocioso.");
+				}
 			}
-			try {
-				Thread.sleep(400); // 1 segundo
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			this.delay(400);
+		}
+	}
+
+	/**
+	 * Tiempo de espera entre cada ciclo.
+	 */
+	private void delay(int tiempo) {
+		try {
+			Thread.sleep(tiempo);
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
 		}
 	}
 
@@ -210,5 +220,9 @@ public class Ejecucion implements Runnable {
 	 */
 	public void setPausado(boolean pausado) {
 		this.pausado = pausado;
+	}
+
+	public void setProceso(Proceso proceso) {
+		this.proceso = proceso;
 	}
 }

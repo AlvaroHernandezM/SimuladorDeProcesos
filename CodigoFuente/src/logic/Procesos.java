@@ -1,7 +1,6 @@
 package logic;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 import com.sun.istack.internal.logging.Logger;
 
@@ -24,7 +23,7 @@ public class Procesos implements Runnable {
 
 	private Thread thread;
 
-	private int numProcesos; // numero de procesos ingresados
+	private int numProcesos; // Numero de procesos ingresados
 	private int numeroProcesadores;// Numero de procesadores
 	private int quantum; // Tiempo de CPU dedicado para cada proceso
 
@@ -45,24 +44,26 @@ public class Procesos implements Runnable {
 	 */
 	public Procesos(ColaProcesos procesosListo) {
 		super();
-		
+
 		this.procesosListo = procesosListo;
 		this.numProcesos = this.procesosListo.getTamano();
-		
+
 		this.noticia = "";
 		this.refrescar = false;
-		
+
 		// Si esta sin parametros solo existe un procesador osea 1
-		this.ejecucion = new Ejecucion(1);
+		this.procesadores = new ArrayList<Ejecucion>();
+		this.procesadores.add(this.ejecucion = new Ejecucion(1));
+
 		this.bloqueo = new Bloqueo();
-		
+
 		this.procesosBloqueado = new ColaProcesos();
 		this.procesosTerminado = new ColaProcesos();
-		
+
 		this.pausado = false;
-		
+
 		this.auxiliar = new Proceso();
-		
+
 		this.ejecutar();
 	}
 
@@ -78,18 +79,15 @@ public class Procesos implements Runnable {
 	public Procesos(ColaProcesos procesosListo, int numeroProcesadores) {
 		super();
 
-		this.LOGGER.setLevel(Level.INFO);
+				this.procesosListo = procesosListo;
 
-		this.procesosListo = procesosListo;
 		this.numeroProcesadores = numeroProcesadores;
 
-		if (this.numeroProcesadores == 1) {
-			this.ejecucion = new Ejecucion(this.numeroProcesadores);
-		} else {
-			this.procesadores = new ArrayList<Ejecucion>();
-			for (int i = 0; i < this.numeroProcesadores; i++) {
-				this.procesadores.add(new Ejecucion(i));
-			}
+		this.procesadores = new ArrayList<Ejecucion>();
+
+		// Crea el numero de procesadores para la ejecuccion.
+		for (int i = 0; i < this.numeroProcesadores; i++) {
+			this.procesadores.add(new Ejecucion(i + 1));
 		}
 
 		this.numProcesos = this.procesosListo.getTamano();
@@ -131,20 +129,17 @@ public class Procesos implements Runnable {
 	/**
 	 * Verifica que ya hayan desbloqueados desde la Clase Bloqueo
 	 */
+	@SuppressWarnings("static-access")
 	private void verificarDesbloqueados() {
-
 		ColaProcesos aux = this.bloqueo.getDesbloqueados();
-
 		if (aux != null) {
-
-			this.noticia = "TAMANoOOOO2:" + aux.getTamano();
 			for (int i = 0; i < aux.getTamano(); i++) {
 				this.procesosListo.agregar(aux.getProceso(i));
-				this.noticia = "Se ha desbloqueado y agregado a listos " + (i + 1);
+				this.LOGGER.info(
+						"El proceso " + aux.getProceso(i).getNombre() + "Se ha desbloqueado y se a agregado a listos");
 			}
 			this.bloqueo.borrarDesbloqueados();
 		}
-
 	}
 
 	/**
@@ -165,56 +160,105 @@ public class Procesos implements Runnable {
 		return this.procesosTerminado;
 	}
 
+	/**
+	 * Pausa la ejecuccion en todos los procesadores.
+	 */
+	@SuppressWarnings("static-access")
+	public void pausarEjecucion() {
+		for (int i = 0; i < this.procesadores.size(); i++) {
+			this.procesadores.get(i).pausar();
+		}
+		this.LOGGER.info("Toda la ejecuccion pausada");
+	}
+
+	/**
+	 * Termina la ejecuccion en todos los procesadores
+	 */
+	@SuppressWarnings("static-access")
+	public void terminarEjecuccion() {
+		for (int i = 0; i < this.procesadores.size(); i++) {
+			this.procesadores.get(i).terminar();
+		}
+		this.bloqueo.terminar();
+		this.LOGGER.info("Ejecuccion terminada");
+	}
+
+	/**
+	 * Administra la ejecuccion de los procesos en los procesadores que estan
+	 * ociosos y les asigna un proceso para cada uno en caso de no tener uno.
+	 * 
+	 */
+	private void administrarProcesadores() {
+
+		for (int i = 0; i < (this.restantes() + 1); i++) {
+			if (this.procesadores.get(i).getProceso() == null) {
+				this.procesadores.get(i).agregarProceso(this.procesosListo.getProceso());
+			} else if (this.procesadores.get(i).algunaNovedad()) {
+				this.auxiliar = this.procesadores.get(i).getProceso();
+				if (this.auxiliar.isBloqueado()) {
+					this.bloqueo.anadirBloqueo(this.auxiliar);
+				} else if (this.auxiliar.isTerminado()) {
+					this.procesosTerminado.agregar(this.auxiliar);
+				}
+				this.procesadores.get(i).setProceso(null);
+			}
+		}
+	}
+
+	/**
+	 * Dependiendo de numero de procesosListo o el numero de procesadores,
+	 * retorna el valor maximo de procesos a ejecutar.
+	 * 
+	 * @return
+	 */
+	private int restantes() {
+		if (this.procesosListo.getTamano() > this.numeroProcesadores) {
+			return this.numeroProcesadores;
+		} else {
+			return this.procesosListo.getTamano();
+		}
+	}
+
 	@Override
 	public void run() {
+
 		while (!this.isFinalizado()) {
 			if (!this.pausado) {
 				if (!this.procesosListo.isVacia()) {
-					this.ejecucion.agregarProceso(this.procesosListo.getProceso());
-					this.noticia = "Extraccion proceso listo";
-					this.refrescar = true;
-					while (!this.ejecucion.algunaNovedad()) {
-						this.verificarDesbloqueados();
-						this.noticia = "Sigue en ejecucion - Esperando novedad";
-						this.refrescar = true;
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {
-							this.noticia = e.getMessage();
-						}
-					}
-					this.refrescar = true;
-					this.auxiliar = this.ejecucion.getProceso();
-					this.noticia = "Obteniendo proceso al recibir novedad" + this.auxiliar.getNombre() + " "
-							+ this.auxiliar.getEstado();
-					if (this.auxiliar.isBloqueado()) {
-						this.noticia = "BLOQUEADOO  " + this.auxiliar.getNombre();
-						this.bloqueo.anadirBloqueo(this.auxiliar);
-						this.refrescar = true;
-					} else if (this.auxiliar.isTerminado()) {
-						this.noticia = "Ha terminado";
-						this.procesosTerminado.agregar(this.auxiliar);
-						this.refrescar = true;
-					}
+
 					this.verificarDesbloqueados();
-					this.refrescar = true;
+
+					this.administrarProcesadores();
+
+					this.verificarDesbloqueados();
+
+					this.delay(400);
+
 				} else {
+
 					this.verificarDesbloqueados();
-					try {
-						Thread.sleep(400);
-					} catch (Exception e) {
-						this.noticia = e.getMessage();
-					}
+
+					this.delay(400);
 				}
 			} else {
-				this.ejecucion.pausar();
-				this.noticia = "Pausado ejecucion";
+
+				this.pausarEjecucion();
 			}
 		}
-		this.noticia = "Terminado ejecucion";
-		this.ejecucion.terminar();
-		this.bloqueo.terminar();
-		System.out.println("ha terminadooooooo");
+
+		this.terminarEjecuccion();
+	}
+
+	/**
+	 * Tiempo de espera entre revisiones.
+	 */
+	@SuppressWarnings("static-access")
+	private void delay(int tiempo) {
+		try {
+			Thread.sleep(tiempo);
+		} catch (Exception e) {
+			this.LOGGER.warning(e.getMessage());
+		}
 	}
 
 	/**
@@ -278,5 +322,21 @@ public class Procesos implements Runnable {
 	 */
 	public Thread getThread() {
 		return thread;
+	}
+
+	/**
+	 * Obtiene el valor del quantum.
+	 * @return valor entero que representa el quantum de procesador en segundos.
+	 */
+	public int getQuantum() {
+		return quantum;
+	}
+
+	/**
+	 * Asigna un valor al quantum
+	 * @param quantum
+	 */
+	public void setQuantum(int quantum) {
+		this.quantum = quantum;
 	}
 }
