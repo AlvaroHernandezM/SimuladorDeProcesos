@@ -15,8 +15,8 @@ public class TestProcesos {
 
 		ColaProcesos colaProcesos = new ColaProcesos();
 		
-		Proceso p1 = new Proceso("p_1", 10);
-		Proceso p2 = new Proceso("p_2", 15);
+		Proceso p1 = new Proceso("p_1", 14);
+		Proceso p2 = new Proceso("p_2", 10);
 		Proceso p3 = new Proceso("p_3", 20);
 		Proceso p4 = new Proceso("p_4", 10);
 		Proceso p5 = new Proceso("p_5", 15);
@@ -33,8 +33,9 @@ public class TestProcesos {
 		colaProcesos.agregar(p6);
 		
 		int numeroProcesadores = 4;
+		int quantum = 10;
 		
-		Procesos procesos = new Procesos(colaProcesos, numeroProcesadores);
+		Procesos procesos = new Procesos(colaProcesos, numeroProcesadores, quantum);
 	}
 
 }

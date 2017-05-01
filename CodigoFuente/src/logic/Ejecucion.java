@@ -16,9 +16,13 @@ public class Ejecucion implements Runnable {
 
 	private boolean pausado, finalizado;
 
+	private int quantum;
+
+	private int quantumActual;
+
 	private Thread thread;
 
-	public String noticia, restante;
+	// public String noticia, restante;
 
 	private final static Logger LOGGER = Logger.getLogger(Ejecucion.class);
 
@@ -26,10 +30,12 @@ public class Ejecucion implements Runnable {
 	 * Constructor sin parametros
 	 */
 	@SuppressWarnings("static-access")
-	public Ejecucion(int numeroProcesador) {
+	public Ejecucion(int numeroProcesador, int quantum) {
 		super();
 
 		this.idProcesador = numeroProcesador;
+
+		this.quantum = quantum;
 
 		this.proceso = null;
 
@@ -82,8 +88,7 @@ public class Ejecucion implements Runnable {
 	@SuppressWarnings("static-access")
 	public void agregarProceso(Proceso proceso) {
 		this.proceso = proceso;
-		if (this.pausado)
-			this.pausado = false;
+		this.pausado = false;
 		this.LOGGER.info("Procesador " + this.idProcesador + ": agregado el proceso: " + this.getNombre());
 	}
 
@@ -103,7 +108,11 @@ public class Ejecucion implements Runnable {
 	 *         termino su tiepo de ejecucion
 	 */
 	public boolean algunaNovedad() {
-		return this.proceso.isBloqueado() || this.proceso.isTerminado();
+		if (this.proceso.isBloqueado() || this.proceso.isTerminado() || this.pausado) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -129,28 +138,43 @@ public class Ejecucion implements Runnable {
 		return this.proceso.getNombre();
 	}
 
+	/**
+	 * Disminuye en un segundo el valor del quantum actual.
+	 * 
+	 * @return true si aun queda tiempo de quantum, false si ya no queda tiempo.
+	 */
+	public boolean disminuirQuantumActual() {
+		if (this.quantumActual != 0) {
+			this.quantumActual--;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	@SuppressWarnings("static-access")
 	@Override
 	public void run() {
-		boolean avisoLogger = false;
+
 		while (!this.finalizado) {
 			if (!this.pausado) {
 
 				this.proceso.admitir();
-				avisoLogger = false;
 
-				while (!this.proceso.isBloqueado() && !this.proceso.isTerminado()) {
-
+				while ((!this.proceso.isBloqueado()) && (!this.proceso.isTerminado())) {
 					this.proceso.disminuirTiempoEjecucion();
-//					this.restante = "Tiempo restante: " + this.proceso.getTiempoEjecucionR();
-//					System.out.println("Procesador " + this.idProcesador + " " + this.restante);
+					if (this.proceso.getEstado().equals(Estado.TERMINADO)) {
+						this.pausado = true;
+					}
+					String restante = "Tiempo restante: " + this.proceso.getTiempoEjecucionR();
+					System.out.println(
+							"Procesador " + this.idProcesador + " " + this.proceso.getEstado() + " " + restante);
 					this.delay(1000);
 				}
 			} else {
-				if (avisoLogger == false) {
-					avisoLogger = true;
-					this.LOGGER.info("Procesador " + this.idProcesador + " en ocioso.");
-				}
+
+				System.out.println("Procesador " + this.idProcesador + " en ocioso.");
+
 			}
 			this.delay(400);
 		}

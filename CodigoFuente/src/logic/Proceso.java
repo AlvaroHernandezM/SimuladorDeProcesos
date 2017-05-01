@@ -122,7 +122,7 @@ public class Proceso {
 	}
 
 	/**
-	 * verificar si esta terminado
+	 * Verificar si esta terminado
 	 *
 	 * @return true o false
 	 */
@@ -219,5 +219,9 @@ public class Proceso {
 	 */
 	public Estado getEstado() {
 		return estado;
+	}
+
+	public void setEstado(Estado estado) {
+		this.estado = estado;
 	}
 }

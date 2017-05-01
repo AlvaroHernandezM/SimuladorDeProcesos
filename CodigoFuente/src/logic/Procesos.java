@@ -51,9 +51,11 @@ public class Procesos implements Runnable {
 		this.noticia = "";
 		this.refrescar = false;
 
+		this.quantum = 20; // Default quantum 20 segundos
+
 		// Si esta sin parametros solo existe un procesador osea 1
 		this.procesadores = new ArrayList<Ejecucion>();
-		this.procesadores.add(this.ejecucion = new Ejecucion(1));
+		this.procesadores.add(this.ejecucion = new Ejecucion(1, this.quantum));
 
 		this.bloqueo = new Bloqueo();
 
@@ -76,18 +78,20 @@ public class Procesos implements Runnable {
 	 * @param numeroProcesadores
 	 *            con el que se va a realizar la simulacion.
 	 */
-	public Procesos(ColaProcesos procesosListo, int numeroProcesadores) {
+	public Procesos(ColaProcesos procesosListo, int numeroProcesadores, int quantum) {
 		super();
 
-				this.procesosListo = procesosListo;
+		this.procesosListo = procesosListo;
 
 		this.numeroProcesadores = numeroProcesadores;
+
+		this.quantum = quantum;
 
 		this.procesadores = new ArrayList<Ejecucion>();
 
 		// Crea el numero de procesadores para la ejecuccion.
 		for (int i = 0; i < this.numeroProcesadores; i++) {
-			this.procesadores.add(new Ejecucion(i + 1));
+			this.procesadores.add(new Ejecucion((i + 1), this.quantum));
 		}
 
 		this.numProcesos = this.procesosListo.getTamano();
@@ -190,33 +194,30 @@ public class Procesos implements Runnable {
 	 */
 	private void administrarProcesadores() {
 
-		for (int i = 0; i < (this.restantes() + 1); i++) {
-			if (this.procesadores.get(i).getProceso() == null) {
+		for (int i = 0; i < this.numeroProcesadores; i++) {
+			if ((this.procesadores.get(i).getProceso() == null) && (this.procesosListo.getTamano() > 0)) {
 				this.procesadores.get(i).agregarProceso(this.procesosListo.getProceso());
-			} else if (this.procesadores.get(i).algunaNovedad()) {
-				this.auxiliar = this.procesadores.get(i).getProceso();
-				if (this.auxiliar.isBloqueado()) {
-					this.bloqueo.anadirBloqueo(this.auxiliar);
-				} else if (this.auxiliar.isTerminado()) {
-					this.procesosTerminado.agregar(this.auxiliar);
-				}
-				this.procesadores.get(i).setProceso(null);
 			}
 		}
-	}
 
-	/**
-	 * Dependiendo de numero de procesosListo o el numero de procesadores,
-	 * retorna el valor maximo de procesos a ejecutar.
-	 * 
-	 * @return
-	 */
-	private int restantes() {
-		if (this.procesosListo.getTamano() > this.numeroProcesadores) {
-			return this.numeroProcesadores;
-		} else {
-			return this.procesosListo.getTamano();
+		for (int i = 0; i < this.numeroProcesadores; i++) {
+			if ((this.procesadores.get(i).algunaNovedad())) {
+
+				this.auxiliar = this.procesadores.get(i).getProceso();
+
+				if (this.auxiliar.isTerminado()) {
+
+					this.procesosTerminado.agregar(this.auxiliar);
+					this.procesadores.get(i).setProceso(null);
+
+				} else if (this.auxiliar.isBloqueado()) {
+
+					this.bloqueo.anadirBloqueo(this.auxiliar);
+					this.procesadores.get(i).setProceso(null);
+				}
+			}
 		}
+
 	}
 
 	@Override
@@ -326,6 +327,7 @@ public class Procesos implements Runnable {
 
 	/**
 	 * Obtiene el valor del quantum.
+	 * 
 	 * @return valor entero que representa el quantum de procesador en segundos.
 	 */
 	public int getQuantum() {
@@ -334,6 +336,7 @@ public class Procesos implements Runnable {
 
 	/**
 	 * Asigna un valor al quantum
+	 * 
 	 * @param quantum
 	 */
 	public void setQuantum(int quantum) {
