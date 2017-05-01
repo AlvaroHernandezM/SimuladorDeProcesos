@@ -116,5 +116,6 @@ public final class Eventos {
         jButton.addActionListener(listener);
         jButton.setActionCommand(Constants.CLICK_REANUDAR);
     }
+    
 
 }

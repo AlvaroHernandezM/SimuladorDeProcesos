@@ -1,5 +1,7 @@
 package gui;
 
+import java.util.ArrayList;
+import javax.swing.JComboBox;
 import javax.swing.table.DefaultTableModel;
 import logic.ColaProcesos;
 import logic.Procesos;
@@ -49,7 +51,7 @@ public class Acciones {
     }
 
     /**
-     * Remuve las filas de la tabla.
+     * Remueve las filas de la tabla.
      *
      * @param dtm
      */
@@ -86,6 +88,7 @@ public class Acciones {
 
     /**
      * Permite actualizar los procesos terminados en la tabla.
+     *
      * @param dtm
      * @param terminados
      * @param procesos
@@ -108,6 +111,31 @@ public class Acciones {
             }
         }
 
+    }
+
+
+    public void añadirFilasTabla(DefaultTableModel dtm, JComboBox jComboBox) {
+        ArrayList lista = obtenerArrayProcesadores(jComboBox);
+        for (int i = 0; i < lista.size(); i++) {
+            Object[] fila = new Object[4];
+            fila[0] = lista.get(i);
+            dtm.addRow(fila);
+        }
+    }
+
+    /**
+     * Retorno de la lista de procesadores a emplear durante la ejecucion.
+     *
+     * @param jComboBox
+     * @return
+     */
+    public ArrayList obtenerArrayProcesadores(JComboBox jComboBox) {
+        int cantidadProcesadores = Integer.parseInt(jComboBox.getSelectedItem().toString());
+        ArrayList lista = new ArrayList();
+        for (int i = 0; i < cantidadProcesadores; i++) {
+            lista.add("Procesador" + (i + 1));
+        }
+        return lista;
     }
 
 }

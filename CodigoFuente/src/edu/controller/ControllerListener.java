@@ -102,8 +102,15 @@ public class ControllerListener implements ActionListener, Runnable {
      * ejecucion).
      */
     public void ejecutarProceso() {
-        if (this.restricciones.verEstadoCola(this.ventanaPrincipal, colaProcesos)) {
-            this.procesos = new Procesos(this.colaProcesos);
+        JTextField quantum = this.ventanaPrincipal.getjTFQuantumCPU();
+        JTextField quantumActual = this.ventanaPrincipal.getjTFQuantumActual();
+        if ((this.restricciones.verEstadoCola(this.ventanaPrincipal, colaProcesos))
+                && (this.restricciones.restriccionesQuantum(this.ventanaPrincipal, quantum))) {
+            anadirFilasProcesadores();
+            this.procesos = new Procesos(this.colaProcesos, Integer.parseInt(quantum.getText()));
+            quantumActual.setText(quantum.getText());
+            quantum.setText("");
+            quantum.setEnabled(false);
             this.ventanaPrincipal.getBotonEjecutar().setEnabled(false);
             this.estado = true;
             this.terminados = true;
@@ -118,8 +125,8 @@ public class ControllerListener implements ActionListener, Runnable {
      */
     public void bloquearProceso() {
         JTextField campoBloqueo = this.ventanaPrincipal.getCampoBloqueo();
-        if (this.restricciones.llenarTiempoBloqueo(this.ventanaPrincipal, campoBloqueo)
-                && this.restricciones.verEstadoColaBloqueado(this.ventanaPrincipal, colaProcesos, this.ventanaPrincipal.getCampoBloqueo())) {
+        if (this.restricciones.llenarTiempoBloqueo(this.ventanaPrincipal, campoBloqueo) && this.restricciones
+                .verEstadoColaBloqueado(this.ventanaPrincipal, colaProcesos, this.ventanaPrincipal.getCampoBloqueo())) {
             this.procesos.bloquear(Integer.parseInt(campoBloqueo.getText()));
             this.ventanaPrincipal.getCampoBloqueo().setText(null);
         }
@@ -141,14 +148,20 @@ public class ControllerListener implements ActionListener, Runnable {
      */
     public void refrescarActual() {
         if (!this.procesos.isFinalizado()) {
+
             String[] infoProceso = this.procesos.getEjecucion().getInfoProceso().split("-");
-            this.ventanaPrincipal.getCampoNombreEjecucion().setText(infoProceso[0]);
-            this.ventanaPrincipal.getCampoTiempoRestante().setText(infoProceso[1]);
+                this.ventanaPrincipal.getModeloTablaEjecucion().setValueAt(infoProceso[0], 0, 1);
+                this.ventanaPrincipal.getModeloTablaEjecucion().setValueAt(infoProceso[1], 0, 2);
+                this.ventanaPrincipal.getModeloTablaEjecucion().setValueAt(infoProceso[2], 0, 3);
+
         } else {
-            this.ventanaPrincipal.getCampoNombreEjecucion().setText(null);
-            this.ventanaPrincipal.getCampoTiempoRestante().setText(null);
+            this.acciones.removerTabla(this.ventanaPrincipal.getModeloTablaEjecucion());
         }
 
+    }
+
+    public void anadirFilasProcesadores() {
+        this.acciones.añadirFilasTabla(this.ventanaPrincipal.getModeloTablaEjecucion(), this.ventanaPrincipal.getjCBnumPros());
     }
 
     /**

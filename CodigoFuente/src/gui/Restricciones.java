@@ -14,8 +14,6 @@ import logic.ColaProcesos;
  */
 public class Restricciones {
 
-	
-
 	/**
 	 * Permite restringir que tanto el nombre, como el tiempo no esten vacios a
 	 * la hora de crear un proceso.
@@ -35,6 +33,26 @@ public class Restricciones {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Restringe que el tiempo del quantum del procesador no sea nulo y mayor
+	 * que 0
+	 * 
+	 * @param jFrame
+	 * @param JTFQuantum
+	 * @return
+	 */
+	public boolean restriccionesQuantum(JFrame jFrame, JTextField JTFQuantum) {
+		if (JTFQuantum.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(jFrame, "debe_rellanar_quantum_del_cpu");
+			return false;
+		} else if (Integer.parseInt(JTFQuantum.getText()) <= 0) {
+			JOptionPane.showMessageDialog(jFrame, "el_tiempo_para_el_quantum_debe_ser_mayor_a_0");
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	/**
