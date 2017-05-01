@@ -108,7 +108,7 @@ public class Ejecucion implements Runnable {
 	 *         termino su tiepo de ejecucion
 	 */
 	public boolean algunaNovedad() {
-		if (this.proceso.isBloqueado() || this.proceso.isTerminado() || this.pausado) {
+		if (this.proceso.isBloqueado() == true || this.proceso.isTerminado() == true) {
 			return true;
 		} else {
 			return false;
@@ -161,7 +161,7 @@ public class Ejecucion implements Runnable {
 
 				this.proceso.admitir();
 
-				while ((!this.proceso.isBloqueado()) && (!this.proceso.isTerminado())) {
+				while ((this.proceso != null) && (!this.proceso.isBloqueado()) && (!this.proceso.isTerminado())) {
 					this.proceso.disminuirTiempoEjecucion();
 					if (this.proceso.getEstado().equals(Estado.TERMINADO)) {
 						this.pausado = true;

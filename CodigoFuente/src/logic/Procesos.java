@@ -147,6 +147,21 @@ public class Procesos implements Runnable {
 	}
 
 	/**
+	 * Verifica que no hayan procesos terminados en los procesadores.
+	 */
+	private void verificarProcesadores() {
+		for (int i = 0; i < this.numeroProcesadores; i++) {
+			if (this.procesadores.get(i).getProceso().getEstado().equals(Estado.TERMINADO)) {
+				Proceso procesoAuxiliar = this.procesadores.get(i).getProceso();
+				if (procesoAuxiliar != null) {
+					this.procesosTerminado.agregar(procesoAuxiliar);
+					this.procesadores.get(i).setProceso(null);
+				}
+			}
+		}
+	}
+
+	/**
 	 * Obtiene bloqueados
 	 *
 	 * @return lista de bloqueados
@@ -201,6 +216,7 @@ public class Procesos implements Runnable {
 		}
 
 		for (int i = 0; i < this.numeroProcesadores; i++) {
+			this.verificarDesbloqueados();
 			if ((this.procesadores.get(i).algunaNovedad())) {
 
 				this.auxiliar = this.procesadores.get(i).getProceso();
@@ -224,6 +240,8 @@ public class Procesos implements Runnable {
 	public void run() {
 
 		while (!this.isFinalizado()) {
+			System.out.println(this.procesosTerminado.getTamano());
+
 			if (!this.pausado) {
 				if (!this.procesosListo.isVacia()) {
 
@@ -238,6 +256,8 @@ public class Procesos implements Runnable {
 				} else {
 
 					this.verificarDesbloqueados();
+
+					this.verificarProcesadores();
 
 					this.delay(400);
 				}
