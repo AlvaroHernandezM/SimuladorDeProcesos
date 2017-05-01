@@ -212,12 +212,17 @@ public class Procesos implements Runnable {
 		for (int i = 0; i < this.numeroProcesadores; i++) {
 			if ((this.procesadores.get(i).getProceso() == null) && (this.procesosListo.getTamano() > 0)) {
 				this.procesadores.get(i).agregarProceso(this.procesosListo.getProceso());
+				this.procesadores.get(i).setQuantumActual(this.quantum);
 			}
 		}
 
 		for (int i = 0; i < this.numeroProcesadores; i++) {
+			
 			this.verificarDesbloqueados();
+			
 			if ((this.procesadores.get(i).algunaNovedad())) {
+				
+				System.out.println("novedad");
 
 				this.auxiliar = this.procesadores.get(i).getProceso();
 

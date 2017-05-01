@@ -157,18 +157,25 @@ public class Ejecucion implements Runnable {
 	public void run() {
 
 		while (!this.finalizado) {
+			
 			if (!this.pausado) {
 
 				this.proceso.admitir();
 
 				while ((this.proceso != null) && (!this.proceso.isBloqueado()) && (!this.proceso.isTerminado())) {
+
 					this.proceso.disminuirTiempoEjecucion();
-					if (this.proceso.getEstado().equals(Estado.TERMINADO)) {
-						this.pausado = true;
+
+					if (!this.disminuirQuantumActual()) {
+
+						this.proceso.setEstado(Estado.BLOQUEADO);
+						this.quantumActual = this.quantum;
 					}
+
 					String restante = "Tiempo restante: " + this.proceso.getTiempoEjecucionR();
 					System.out.println(
 							"Procesador " + this.idProcesador + " " + this.proceso.getEstado() + " " + restante);
+
 					this.delay(1000);
 				}
 			} else {
@@ -248,5 +255,13 @@ public class Ejecucion implements Runnable {
 
 	public void setProceso(Proceso proceso) {
 		this.proceso = proceso;
+	}
+
+	public int getQuantumActual() {
+		return quantumActual;
+	}
+
+	public void setQuantumActual(int quantumActual) {
+		this.quantumActual = quantumActual;
 	}
 }
