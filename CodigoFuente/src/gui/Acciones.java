@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import javax.swing.JComboBox;
 import javax.swing.table.DefaultTableModel;
 import logic.ColaProcesos;
+import logic.Ejecucion;
 import logic.Procesos;
 
 /**
@@ -113,29 +114,34 @@ public class Acciones {
 
     }
 
+    public void procesosEjecucion(DefaultTableModel dtm, ArrayList<Ejecucion> listaProcesadores) {
+        
+        for (int i = 0; i < listaProcesadores.size(); i++) {
+                String[] infoProceso = listaProcesadores.get(i).getInfoProceso().split("-");
+                dtm.setValueAt(infoProceso[0], i, 1);
+                dtm.setValueAt(infoProceso[1], i, 2);
+                dtm.setValueAt(infoProceso[2], i, 3);
+        }
 
-    public void añadirFilasTabla(DefaultTableModel dtm, JComboBox jComboBox) {
-        ArrayList lista = obtenerArrayProcesadores(jComboBox);
-        for (int i = 0; i < lista.size(); i++) {
+    }
+
+    public void añadirFilasTabla(DefaultTableModel dtm, JComboBox jComboBox, ArrayList<Ejecucion> lista) {
+        for (int i = 0; i < obtenerArrayProcesadores(jComboBox); i++) {
             Object[] fila = new Object[4];
-            fila[0] = lista.get(i);
+            fila[0] = lista.get(i).getIdProcesador();
             dtm.addRow(fila);
         }
     }
 
     /**
-     * Retorno de la lista de procesadores a emplear durante la ejecucion.
+     * Retorna el numero de procesadores a emplear durante la ejecucion.
      *
      * @param jComboBox
      * @return
      */
-    public ArrayList obtenerArrayProcesadores(JComboBox jComboBox) {
-        int cantidadProcesadores = Integer.parseInt(jComboBox.getSelectedItem().toString());
-        ArrayList lista = new ArrayList();
-        for (int i = 0; i < cantidadProcesadores; i++) {
-            lista.add("Procesador" + (i + 1));
-        }
-        return lista;
+    public int obtenerArrayProcesadores(JComboBox jComboBox) {
+        return Integer.parseInt(jComboBox.getSelectedItem().toString());
+
     }
 
 }

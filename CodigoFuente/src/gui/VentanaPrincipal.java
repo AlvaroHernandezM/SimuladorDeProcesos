@@ -153,6 +153,11 @@ public class VentanaPrincipal extends JFrame {
     public JComboBox<String> getjCBnumPros() {
         return jCBnumPros;
     }
+    
+    
+    public JTextField getFieldBloqueoPID (){
+        return this.jTextFieldBloquearPID;
+    }
 
     /**
      * Permite establecer el ancho de las columnas de la tabla de procesos.
@@ -203,7 +208,7 @@ public class VentanaPrincipal extends JFrame {
         jTFtiempoBloqueo = new javax.swing.JTextField();
         jButtonBloquear = new javax.swing.JButton();
         jLabel9 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        jTextFieldBloquearPID = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         jLabel15 = new javax.swing.JLabel();
         jlsegungos = new javax.swing.JLabel();
@@ -327,10 +332,12 @@ public class VentanaPrincipal extends JFrame {
             }
         });
 
+        jTFQuantumActual.setEditable(false);
         jTFQuantumActual.setFont(new java.awt.Font("Book Antiqua", 1, 14)); // NOI18N
         jTFQuantumActual.setOpaque(false);
 
         jPanel2.setBackground(new java.awt.Color(0, 102, 102));
+        jPanel2.setForeground(new java.awt.Color(255, 255, 255));
 
         jCBnumPros.setBackground(new java.awt.Color(204, 204, 255));
         jCBnumPros.setMaximumRowCount(7);
@@ -338,6 +345,7 @@ public class VentanaPrincipal extends JFrame {
         jCBnumPros.setPreferredSize(new java.awt.Dimension(35, 18));
 
         jLabel21.setFont(new java.awt.Font("Book Antiqua", 1, 14)); // NOI18N
+        jLabel21.setForeground(new java.awt.Color(255, 255, 255));
         jLabel21.setText("Num. Procesadores:");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -484,7 +492,15 @@ public class VentanaPrincipal extends JFrame {
             new String [] {
                 "Procesador", "Nombre (PID)", "Tiempo Restante (s)", "Quantum"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane2.setViewportView(jTableEjecucion);
 
         javax.swing.GroupLayout jPanelEjecucionLayout = new javax.swing.GroupLayout(jPanelEjecucion);
@@ -531,7 +547,9 @@ public class VentanaPrincipal extends JFrame {
         jLabel9.setFont(new java.awt.Font("Book Antiqua", 1, 14)); // NOI18N
         jLabel9.setText("PID:");
 
-        jTextField1.setOpaque(false);
+        jTextFieldBloquearPID.setFont(new java.awt.Font("Book Antiqua", 1, 14)); // NOI18N
+        jTextFieldBloquearPID.setForeground(new java.awt.Color(255, 255, 255));
+        jTextFieldBloquearPID.setOpaque(false);
 
         javax.swing.GroupLayout jPanelBloqueoLayout = new javax.swing.GroupLayout(jPanelBloqueo);
         jPanelBloqueo.setLayout(jPanelBloqueoLayout);
@@ -543,7 +561,7 @@ public class VentanaPrincipal extends JFrame {
                     .addGroup(jPanelBloqueoLayout.createSequentialGroup()
                         .addComponent(jLabel9)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField1))
+                        .addComponent(jTextFieldBloquearPID))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelBloqueoLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(jPanelBloqueoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -560,7 +578,7 @@ public class VentanaPrincipal extends JFrame {
                 .addContainerGap(22, Short.MAX_VALUE)
                 .addGroup(jPanelBloqueoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextFieldBloquearPID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanelBloqueoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTFtiempoBloqueo, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -829,7 +847,7 @@ public class VentanaPrincipal extends JFrame {
     private javax.swing.JTextField jTFtiempoProceso;
     private javax.swing.JTable jTableDatos;
     private javax.swing.JTable jTableEjecucion;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextFieldBloquearPID;
     private javax.swing.JLabel jlabelMinutos;
     private javax.swing.JLabel jlsegungos;
     // End of variables declaration//GEN-END:variables

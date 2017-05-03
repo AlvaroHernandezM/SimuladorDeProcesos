@@ -7,8 +7,11 @@ import gui.Restricciones;
 import gui.VentanaPrincipal;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import logic.ColaProcesos;
+import logic.Ejecucion;
 import logic.Proceso;
 import logic.Procesos;
 
@@ -106,8 +109,13 @@ public class ControllerListener implements ActionListener, Runnable {
         JTextField quantumActual = this.ventanaPrincipal.getjTFQuantumActual();
         if ((this.restricciones.verEstadoCola(this.ventanaPrincipal, colaProcesos))
                 && (this.restricciones.restriccionesQuantum(this.ventanaPrincipal, quantum))) {
-            anadirFilasProcesadores();
-            this.procesos = new Procesos(this.colaProcesos, Integer.parseInt(quantum.getText()));
+
+            this.procesos = new Procesos(this.colaProcesos,
+                    this.acciones.obtenerArrayProcesadores(this.ventanaPrincipal.getjCBnumPros()),
+                    Integer.parseInt(quantum.getText()));
+
+            anadirFilasProcesadores(this.procesos.getProcesadores());
+
             quantumActual.setText(quantum.getText());
             quantum.setText("");
             quantum.setEnabled(false);
@@ -119,6 +127,11 @@ public class ControllerListener implements ActionListener, Runnable {
 
     }
 
+    public void anadirFilasProcesadores(ArrayList lista) {
+        this.acciones.añadirFilasTabla(this.ventanaPrincipal.getModeloTablaEjecucion(),
+                this.ventanaPrincipal.getjCBnumPros(), lista);
+    }
+
     /**
      * Bloquea un proceso si este se encuentra en ejecucion haciendo uso de las
      * restricciones.
@@ -127,8 +140,15 @@ public class ControllerListener implements ActionListener, Runnable {
         JTextField campoBloqueo = this.ventanaPrincipal.getCampoBloqueo();
         if (this.restricciones.llenarTiempoBloqueo(this.ventanaPrincipal, campoBloqueo) && this.restricciones
                 .verEstadoColaBloqueado(this.ventanaPrincipal, colaProcesos, this.ventanaPrincipal.getCampoBloqueo())) {
-            this.procesos.bloquear(Integer.parseInt(campoBloqueo.getText()));
-            this.ventanaPrincipal.getCampoBloqueo().setText(null);
+            Ejecucion eje = this.procesos.bloquear(this.ventanaPrincipal.getFieldBloqueoPID().getText());
+            if (eje != null) {
+                eje.bloquear(Integer.parseInt(this.ventanaPrincipal.getCampoBloqueo().getText()));
+                this.ventanaPrincipal.getFieldBloqueoPID().setText(null);
+                this.ventanaPrincipal.getCampoBloqueo().setText(null);
+            }else{
+                JOptionPane.showMessageDialog(this.ventanaPrincipal,"Proceso_No_Encontrado");
+            }
+
         }
 
     }
@@ -143,25 +163,19 @@ public class ControllerListener implements ActionListener, Runnable {
     }
 
     /**
+     *
+     * "AQUIIIIIIIIIIIIII TOCA CAMBIAR PROCESOS POR UNA LISTA D EPROCESOS"
      * Permite actualizar el proceso que esta en ejecucion en el panel
      * correspondiente a el panel de ejecucion.
      */
     public void refrescarActual() {
         if (!this.procesos.isFinalizado()) {
-
-            String[] infoProceso = this.procesos.getEjecucion().getInfoProceso().split("-");
-                this.ventanaPrincipal.getModeloTablaEjecucion().setValueAt(infoProceso[0], 0, 1);
-                this.ventanaPrincipal.getModeloTablaEjecucion().setValueAt(infoProceso[1], 0, 2);
-                this.ventanaPrincipal.getModeloTablaEjecucion().setValueAt(infoProceso[2], 0, 3);
+            this.acciones.procesosEjecucion(this.ventanaPrincipal.getModeloTablaEjecucion(), this.procesos.getProcesadores());
 
         } else {
             this.acciones.removerTabla(this.ventanaPrincipal.getModeloTablaEjecucion());
         }
 
-    }
-
-    public void anadirFilasProcesadores() {
-        this.acciones.añadirFilasTabla(this.ventanaPrincipal.getModeloTablaEjecucion(), this.ventanaPrincipal.getjCBnumPros());
     }
 
     /**
@@ -173,7 +187,7 @@ public class ControllerListener implements ActionListener, Runnable {
             try {
                 this.thread.suspend();
                 this.procesos.getThread().suspend();
-                this.procesos.getEjecucion().getThread().suspend();
+//                this.procesos.getEjecucion().getThread().suspend();
                 this.procesos.getBloqueo().getThread().suspend();
                 this.ventanaPrincipal.getjButtonPausar().setEnabled(false);
             } catch (Exception e) {
@@ -192,7 +206,7 @@ public class ControllerListener implements ActionListener, Runnable {
             try {
                 this.thread.resume();
                 this.procesos.getThread().resume();
-                this.procesos.getEjecucion().getThread().resume();
+//                this.procesos.getEjecucion().getThread().resume();
                 this.procesos.getBloqueo().getThread().resume();
                 this.ventanaPrincipal.getjButtonPausar().setEnabled(true);
             } catch (Exception e) {
@@ -257,7 +271,6 @@ public class ControllerListener implements ActionListener, Runnable {
      */
     @Override
     public void run() {
-
         while (this.estado) {
             if (this.procesos.refrescar) {
                 this.procesos.refrescar = false;
