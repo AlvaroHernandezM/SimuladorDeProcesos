@@ -10,266 +10,263 @@ import com.sun.istack.internal.logging.Logger;
  */
 public class Ejecucion implements Runnable {
 
-    private String idProcesador;
+	private String idProcesador;
 
-    private Proceso proceso;
+	private Proceso proceso;
 
-    private boolean pausado, finalizado;
+	private boolean pausado, finalizado;
 
-    private int quantum;
+	private int quantum;
 
-    private int quantumActual;
+	private int quantumActual;
 
-    private Thread thread;
+	private Thread thread;
 
-    // public String noticia, restante;
-    private final static Logger LOGGER = Logger.getLogger(Ejecucion.class);
+	private final static Logger LOGGER = Logger.getLogger(Ejecucion.class);
 
-    /**
-     * Constructor sin parametros
-     */
-    @SuppressWarnings("static-access")
-    public Ejecucion(String numeroProcesador, int quantum) {
-        super();
+	/**
+	 * Constructor sin parametros
+	 */
 
-        this.idProcesador = numeroProcesador;
+	public Ejecucion(String numeroProcesador, int quantum) {
+		super();
 
-        this.quantum = quantum;
+		this.idProcesador = numeroProcesador;
 
-        this.proceso = null;
+		this.quantum = quantum;
 
-        this.pausado = true;
-        this.finalizado = false;
+		this.proceso = null;
 
-        this.ejecutarHilo();
+		this.pausado = true;
+		this.finalizado = false;
 
-        this.LOGGER.info(this.idProcesador + " funcionando.");
-    }
+		this.ejecutarHilo();
 
-    /**
-     * Constructor recibiendo el proceso a ejecutar
-     *
-     * @param proceso
-     */
-    public Ejecucion(Proceso proceso) {
-        super();
-        this.proceso = proceso;
-        this.pausado = false;
-        this.finalizado = false;
+		this.LOGGER.info(this.idProcesador + " funcionando.");
+	}
 
-        this.ejecutarHilo();
-    }
+	/**
+	 * Constructor recibiendo el proceso a ejecutar
+	 *
+	 * @param proceso
+	 */
+	public Ejecucion(Proceso proceso) {
+		super();
+		this.proceso = proceso;
+		this.pausado = false;
 
-    /**
-     * Obtener el proceso en ejecucion y deteniendo el hilo
-     *
-     * @return proceso actual
-     */
-    public Proceso getProceso() {
-        this.pausado = true;
-        return proceso;
-    }
+		this.ejecutarHilo();
+	}
 
-    /**
-     * Obtener la informacion del proceso en ejecucion
-     *
-     * @return string con nombre y tiempo restante
-     */
-    public String getInfoProceso() {
-        if (this.proceso != null) {
-            return this.proceso.getNombre() + "-" + this.proceso.getTiempoEjecucionR()
-                    + "-" + this.quantumActual;
-        } else {
-            return "Ocioso" + "-" + "0" + "-" + "0";
-        }
-    }
+	/**
+	 * Obtener el proceso en ejecucion y deteniendo el hilo
+	 *
+	 * @return proceso actual
+	 */
+	public Proceso getProceso() {
+		this.pausado = true;
+		return proceso;
+	}
 
-    /**
-     * Agregar proceso a ejecutar
-     *
-     * @param proceso
-     */
-    @SuppressWarnings("static-access")
-    public void agregarProceso(Proceso proceso) {
-        this.proceso = proceso;
-        this.pausado = false;
-        this.LOGGER.info(this.idProcesador + ": agregado el proceso: " + this.getNombre());
-    }
+	/**
+	 * Obtener la informacion del proceso en ejecucion
+	 *
+	 * @return string con nombre y tiempo restante
+	 */
+	public String getInfoProceso() {
+		if (this.proceso != null) {
+			return this.proceso.getNombre() + "-" + this.proceso.getTiempoEjecucionR() + "-" + this.quantumActual;
+		} else {
+			return "Ocioso" + "-" + "0" + "-" + "0";
+		}
+	}
 
-    /**
-     * Metodo para avisar de un bloque, pero se limita a solo cambiar el estado
-     * del proceso.
-     *
-     * @param tiempo
-     */
-    public void bloquear(int tiempo) {
-        this.proceso.esperarSuceso(tiempo);
-        this.pausado = true;
-    }
+	/**
+	 * Agregar proceso a ejecutar
+	 *
+	 * @param proceso
+	 */
 
-    /**
-     * @return retorna true cuando el proceso ha sido bloqueado externamente o
-     * termino su tiepo de ejecucion
-     */
-    public boolean algunaNovedad() {
-        if (this.proceso != null) {
-            if (this.proceso.isBloqueado() == true || this.proceso.isTerminado() == true) {
-                return true;
-            }
-        }
-        return false;
-    }
+	public void agregarProceso(Proceso proceso) {
+		this.proceso = proceso;
+		this.quantumActual = this.quantum;
+		this.pausado = false;
+		this.LOGGER.info(this.idProcesador + ": agregado el proceso: " + this.getNombre());
+	}
 
-    /**
-     * Pausar hilo
-     */
-    public void pausar() {
-        this.pausado = true;
-    }
+	/**
+	 * Metodo para avisar de un bloque, pero se limita a solo cambiar el estado
+	 * del proceso.
+	 *
+	 * @param tiempo
+	 */
+	public void bloquear(int tiempo) {
+		this.proceso.esperarSuceso(tiempo);
+		this.pausado = true;
+	}
 
-    /**
-     * Terminar hilo
-     */
-    public void terminar() {
-        this.finalizado = true;
-    }
+	/**
+	 * @return retorna true cuando el proceso ha sido bloqueado externamente o
+	 *         termino su tiempo de ejecucion o su quantum a terminado
+	 */
+	public boolean algunaNovedad() {
+		if (this.proceso != null) {
+			if ((this.proceso.isBloqueado() == true) || (this.proceso.isTerminado() == true)
+					|| (this.quantumAgotado() == true)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    /**
-     * Obtener nombre
-     *
-     * @return nombre del proceso
-     */
-    public String getNombre() {
-        return this.proceso.getNombre();
-    }
+	/**
+	 * Pausar hilo
+	 */
+	public void pausar() {
+		this.pausado = true;
+	}
 
-    /**
-     * Disminuye en un segundo el valor del quantum actual.
-     *
-     * @return true si aun queda tiempo de quantum, false si ya no queda tiempo.
-     */
-    public boolean disminuirQuantumActual() {
-        if (this.quantumActual != 0) {
-            this.quantumActual--;
-            return true;
-        } else {
-            return false;
-        }
-    }
+	/**
+	 * terminar hilo
+	 */
+	public void terminar() {
+		this.finalizado = true;
+	}
 
-    @SuppressWarnings("static-access")
-    @Override
-    public void run() {
+	/**
+	 * Obtener nombre
+	 *
+	 * @return nombre del proceso
+	 */
+	public String getNombre() {
+		return this.proceso.getNombre();
+	}
 
-        while (!this.finalizado) {
+	/**
+	 * Disminuye en un segundo el valor del quantum actual.
+	 *
+	 * @return true si aun queda tiempo de quantum, false si ya no queda tiempo.
+	 */
+	public boolean disminuirQuantumActual() {
+		if (this.quantumActual != 0) {
+			this.quantumActual--;
+			return true;
+		} else {
+			return false;
+		}
+	}
 
-            if (!this.pausado) {
+	/**
+	 * 
+	 * @return true si el quantum esta agotado, false si no lo esta.
+	 */
+	public boolean quantumAgotado() {
+		if (this.quantumActual == 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
-                this.proceso.admitir();
+	@Override
+	public void run() {
+		while (!this.finalizado) {
+			if (!this.pausado) {
+				this.proceso.admitir();
+				while ((this.proceso != null) && (this.disminuirQuantumActual()) && (!this.proceso.isTerminado())
+						&& (!this.proceso.isBloqueado())) {
 
-                while ((this.proceso != null) && (!this.proceso.isBloqueado()) && (!this.proceso.isTerminado())) {
+					this.proceso.disminuirTiempoEjecucion();
 
-                    this.proceso.disminuirTiempoEjecucion();
+					System.out.println("Q: " + this.quantumActual + " Proceso: " + this.proceso.getNombre()
+							+ " no esta pausado y su estado es: " + this.proceso.getEstado() + ", tiempo restante: "
+							+ this.proceso.getTiempoEjecucionR());
 
-                    if (!this.disminuirQuantumActual()) {
-                        this.proceso.setEstado(Estado.BLOQUEADO);
-                        this.quantumActual = this.quantum;
+					this.delay(1000);
+				}
+				if ((this.proceso != null) && (!this.proceso.isTerminado()) || (this.quantumAgotado())) {
+					this.proceso.bloquear();
+				}
+				this.pausado = true;
+			}
+			// this.delay(50);
+			else {
 
-                    }
+				if (this.proceso != null) {
+					System.out.println(
+							"pausado estado proceso " + this.proceso.getNombre() + ": " + this.proceso.getEstado());
+				}
+				this.delay(1000);
 
-                    String restante = "Tiempo restante: " + this.proceso.getTiempoEjecucionR();
-                    System.out.println(
-                            this.idProcesador + " " + this.proceso.getEstado() + " " + restante +" quantum " + this.quantumActual);
+			}
+		}
+	}
 
-                    this.delay(1000);
-                }
-            } else {
+	/**
+	 * Tiempo de espera entre cada ciclo.
+	 */
+	private void delay(int tiempo) {
+		try {
+			Thread.sleep(tiempo);
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
+	}
 
-                System.out.println(this.idProcesador + " en ocioso.");
+	/**
+	 * Ejecutar hilo
+	 */
+	private void ejecutarHilo() {
+		this.thread = new Thread(this);
+		this.thread.start();
+	}
 
-            }
-            this.delay(400);
-        }
-    }
+	/**
+	 * Obtener hilo
+	 *
+	 * @return hilo
+	 */
+	public Thread getThread() {
+		return thread;
+	}
 
-    /**
-     * Tiempo de espera entre cada ciclo.
-     */
-    private void delay(int tiempo) {
-        try {
-            Thread.sleep(tiempo);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        }
-    }
+	/**
+	 * Verificar si esta pausado
+	 *
+	 * @return true o false
+	 */
+	public boolean isPausado() {
+		return pausado;
+	}
 
-    /**
-     * Ejecutar hilo
-     */
-    private void ejecutarHilo() {
-        this.thread = new Thread(this);
-        this.thread.start();
-    }
+	/**
+	 * Asignar pausa
+	 *
+	 * @param pausado
+	 *            true o false
+	 */
+	public void setPausado(boolean pausado) {
+		this.pausado = pausado;
+	}
 
-    /**
-     * Obtener hilo
-     *
-     * @return hilo
-     */
-    public Thread getThread() {
-        return thread;
-    }
+	public void setProceso(Proceso proceso) {
+		this.proceso = proceso;
+	}
 
-    /**
-     * Verificar si esta finalizado
-     *
-     * @return boolean
-     */
-    public boolean isFinalizado() {
-        return finalizado;
-    }
+	public int getQuantumActual() {
+		return quantumActual;
+	}
 
-    /**
-     * Asignar valor a finalizado
-     *
-     * @param finalizado true o false
-     */
-    public void setFinalizado(boolean finalizado) {
-        this.finalizado = finalizado;
-    }
+	public void setQuantumActual(int quantumActual) {
+		this.quantumActual = quantumActual;
+	}
 
-    /**
-     * Verificar si esta pausado
-     *
-     * @return true o false
-     */
-    public boolean isPausado() {
-        return pausado;
-    }
+	public String getIdProcesador() {
+		return idProcesador;
+	}
 
-    /**
-     * Asignar pausa
-     *
-     * @param pausado true o false
-     */
-    public void setPausado(boolean pausado) {
-        this.pausado = pausado;
-    }
-
-    public void setProceso(Proceso proceso) {
-        this.proceso = proceso;
-    }
-
-    public int getQuantumActual() {
-        return quantumActual;
-    }
-
-    public void setQuantumActual(int quantumActual) {
-        this.quantumActual = quantumActual;
-    }
-
-    public String getIdProcesador() {
-        return idProcesador;
-    }
+	public Proceso getProceso_2() {
+		return this.proceso;
+	}
 
 }
