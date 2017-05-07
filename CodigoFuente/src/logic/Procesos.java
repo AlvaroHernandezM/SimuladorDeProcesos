@@ -220,9 +220,14 @@ public class Procesos implements Runnable {
 
 	private void asignarProcesos() {
 		for (int i = 0; i < this.numeroProcesadores; i++) {
-			if ((this.procesadores.get(i).getProceso() == null) && (this.procesosListo.getTamano() > 0)) {
-				this.procesadores.get(i).agregarProceso(this.procesosListo.getProceso());
-				this.procesadores.get(i).getProceso_2().admitir();
+			if ((this.procesadores.get(i).getProceso_2() == null) && (this.procesosListo.getTamano() > 0)) {
+				Proceso procesoListo = this.procesosListo.getProceso();
+				if (!procesoListo.getEstado().equals(Estado.TERMINADO)) {
+					this.procesadores.get(i).agregarProceso(procesoListo);
+					this.procesadores.get(i).getProceso_2().admitir();
+				} else {
+					this.procesosTerminado.agregar(procesoListo);
+				}
 			}
 		}
 	}
@@ -230,13 +235,25 @@ public class Procesos implements Runnable {
 	private void novedades() {
 		for (int i = 0; i < this.numeroProcesadores; i++) {
 			if (this.procesadores.get(i).algunaNovedad()) {
-				this.auxiliar = this.procesadores.get(i).getProceso();
+				
+				this.auxiliar = this.procesadores.get(i).getProceso_2();
+				System.out.println(
+						"Nombre auxiliar " + auxiliar.getNombre() + " Estado auxiliar" + this.auxiliar.getEstado());
+				if (this.auxiliar.getTiempoEjecucionR() > 0) {
+					this.auxiliar.setEstado(Estado.BLOQUEADO);
+				} else if (this.auxiliar.getTiempoEjecucionR() == 0) {
+					this.auxiliar.setEstado(Estado.TERMINADO);
+				}
+				System.out.println("Estado auxiliar " + this.auxiliar.getEstado());
+
 				if (this.auxiliar.isTerminado()) {
 
 					this.procesosTerminado.agregar(this.auxiliar);
 
 					this.procesadores.get(i).setProceso(null);
-				} else if (this.auxiliar.isBloqueado()) {
+
+				}
+				if (this.auxiliar.isBloqueado()) {
 
 					this.bloqueo.anadirBloqueo(this.auxiliar);
 					this.procesadores.get(i).setProceso(null);
@@ -250,10 +267,12 @@ public class Procesos implements Runnable {
 
 		while (!this.isFinalizado()) {
 			if (!this.pausado) {
+				System.out.println("hola");
 				if (!this.procesosListo.isVacia()) {
 					this.asignarProcesos();
 					this.novedades();
 				} else {
+					this.novedades();
 					this.refrescar = true;
 				}
 				this.verificarProcesadores();

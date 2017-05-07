@@ -178,15 +178,22 @@ public class Ejecucion implements Runnable {
 
 					this.proceso.disminuirTiempoEjecucion();
 
+					if (this.proceso.getTiempoEjecucionR() == 0) {
+						this.proceso.setEstado(Estado.TERMINADO);
+					} else if ((this.quantumAgotado()) && (this.proceso.getTiempoEjecucionR() > 0)) {
+						this.proceso.setEstado(Estado.BLOQUEADO);
+					}else if(this.quantumAgotado()){
+						this.proceso.setEstado(Estado.BLOQUEADO);
+					}
+
 					System.out.println("Q: " + this.quantumActual + " Proceso: " + this.proceso.getNombre()
 							+ " no esta pausado y su estado es: " + this.proceso.getEstado() + ", tiempo restante: "
 							+ this.proceso.getTiempoEjecucionR());
 
 					this.delay(1000);
+
 				}
-				if ((this.proceso != null) && (!this.proceso.isTerminado()) || (this.quantumAgotado())) {
-					this.proceso.bloquear();
-				}
+
 				this.pausado = true;
 			}
 			// this.delay(50);
@@ -194,7 +201,7 @@ public class Ejecucion implements Runnable {
 
 				if (this.proceso != null) {
 					System.out.println(
-							"pausado estado proceso " + this.proceso.getNombre() + ": " + this.proceso.getEstado());
+							"pausado estado proceso " + this.proceso.getNombre() + ": " + this.isPausado());
 				}
 				this.delay(1000);
 
