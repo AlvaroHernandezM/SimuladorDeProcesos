@@ -235,16 +235,16 @@ public class Procesos implements Runnable {
 	private void novedades() {
 		for (int i = 0; i < this.numeroProcesadores; i++) {
 			if (this.procesadores.get(i).algunaNovedad()) {
-				
+
 				this.auxiliar = this.procesadores.get(i).getProceso_2();
-				System.out.println(
-						"Nombre auxiliar " + auxiliar.getNombre() + " Estado auxiliar" + this.auxiliar.getEstado());
+//				System.out.println(
+//						"Nombre auxiliar " + auxiliar.getNombre() + " Estado auxiliar" + this.auxiliar.getEstado());
 				if (this.auxiliar.getTiempoEjecucionR() > 0) {
 					this.auxiliar.setEstado(Estado.BLOQUEADO);
 				} else if (this.auxiliar.getTiempoEjecucionR() == 0) {
 					this.auxiliar.setEstado(Estado.TERMINADO);
 				}
-				System.out.println("Estado auxiliar " + this.auxiliar.getEstado());
+//				System.out.println("Estado auxiliar " + this.auxiliar.getEstado());
 
 				if (this.auxiliar.isTerminado()) {
 
@@ -267,7 +267,6 @@ public class Procesos implements Runnable {
 
 		while (!this.isFinalizado()) {
 			if (!this.pausado) {
-				System.out.println("hola");
 				if (!this.procesosListo.isVacia()) {
 					this.asignarProcesos();
 					this.novedades();

@@ -182,7 +182,7 @@ public class Ejecucion implements Runnable {
 						this.proceso.setEstado(Estado.TERMINADO);
 					} else if ((this.quantumAgotado()) && (this.proceso.getTiempoEjecucionR() > 0)) {
 						this.proceso.setEstado(Estado.BLOQUEADO);
-					}else if(this.quantumAgotado()){
+					} else if (this.quantumAgotado()) {
 						this.proceso.setEstado(Estado.BLOQUEADO);
 					}
 
@@ -200,8 +200,7 @@ public class Ejecucion implements Runnable {
 			else {
 
 				if (this.proceso != null) {
-					System.out.println(
-							"pausado estado proceso " + this.proceso.getNombre() + ": " + this.isPausado());
+					System.out.println("pausado estado proceso " + this.proceso.getNombre() + ": " + this.isPausado());
 				}
 				this.delay(1000);
 
