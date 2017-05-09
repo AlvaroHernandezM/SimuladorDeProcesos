@@ -1,9 +1,14 @@
 package logic;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import com.sun.istack.internal.logging.Logger;
 import javax.swing.JOptionPane;
+
+
+import java.util.logging.FileHandler;
+
 
 /**
  * Clase encargada de estar actualizando las respectivas listas para los
@@ -241,8 +246,10 @@ public class Procesos implements Runnable {
 //						"Nombre auxiliar " + auxiliar.getNombre() + " Estado auxiliar" + this.auxiliar.getEstado());
 				if (this.auxiliar.getTiempoEjecucionR() > 0) {
 					this.auxiliar.setEstado(Estado.BLOQUEADO);
+					LOGGER.info("Procesador: " + this.procesadores.get(i).getIdProcesador()+" cambio de estado a BLOQUEADO");
 				} else if (this.auxiliar.getTiempoEjecucionR() == 0) {
 					this.auxiliar.setEstado(Estado.TERMINADO);
+					LOGGER.info("Procesador: " + this.procesadores.get(i).getIdProcesador()+" cambio de estado a TERMINADO");
 				}
 //				System.out.println("Estado auxiliar " + this.auxiliar.getEstado());
 

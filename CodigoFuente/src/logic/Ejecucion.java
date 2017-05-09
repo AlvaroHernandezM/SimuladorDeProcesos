@@ -91,7 +91,8 @@ public class Ejecucion implements Runnable {
 		this.proceso = proceso;
 		this.quantumActual = this.quantum;
 		this.pausado = false;
-		this.LOGGER.info(this.idProcesador + ": agregado el proceso: " + this.getNombre());
+		this.LOGGER.info(this.idProcesador + ": agregado el proceso: " + this.getNombre() + " tiempo de ejecuccion: "
+				+ this.proceso.getTiempoEjecucionT());
 	}
 
 	/**
@@ -186,9 +187,11 @@ public class Ejecucion implements Runnable {
 						this.proceso.setEstado(Estado.BLOQUEADO);
 					}
 
-					System.out.println("Q: " + this.quantumActual + " Proceso: " + this.proceso.getNombre()
-							+ " no esta pausado y su estado es: " + this.proceso.getEstado() + ", tiempo restante: "
-							+ this.proceso.getTiempoEjecucionR());
+					// System.out.println("Q: " + this.quantumActual + "
+					// Proceso: " + this.proceso.getNombre()
+					// + " no esta pausado y su estado es: " +
+					// this.proceso.getEstado() + ", tiempo restante: "
+					// + this.proceso.getTiempoEjecucionR());
 
 					this.delay(1000);
 
