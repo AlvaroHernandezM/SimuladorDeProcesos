@@ -2,10 +2,6 @@ package pruebas;
 
 import logic.Proceso;
 
-/**
- * Clase de pruebas de procesos.
- * @author 
- */
 public class TestProceso {
 
 	
@@ -22,21 +18,12 @@ public class TestProceso {
 		}
 		System.out.println("Estado: "+p1.getEstado());
 		System.out.println("TE restante: "+p1.getTiempoEjecucionR());;
-		System.out.println("isBloqueado: " +p1.isBloqueado());
-		p1.esperarSuceso(3);
-		System.out.println("isBloqueado: " +p1.isBloqueado());
-		for (int j = 0; j < 3; j++) {
-			p1.dimisnutirTiempoBloqueo();
-		}
-		System.out.println("Estado: "+p1.getEstado());
-		p1.ocurreSuceso();
-		System.out.println("Estado: "+p1.getEstado());
-		System.out.println("TB restante: "+p1.getTiempoBloqueoR());;
+		
 		p1.ejecutar();
 		for (int i = 0; i < 5; i++) {
 			p1.disminuirTiempoEjecucion();
 		}
 		System.out.println("Estado: "+p1.getEstado());
-		System.out.println("TTotal: "+p1.getTiempoTotal());;
+		System.out.println("TTotal: "+p1.getTiempoEjecucionT());
 	}
 }
