@@ -38,7 +38,7 @@ public class Ejecucion implements Runnable {
      * @return proceso actual
      */
     public Proceso getProceso() {
-        //this.pausado = true;
+        this.pausado = true;
         return proceso;
     }
     /**
@@ -95,7 +95,7 @@ public class Ejecucion implements Runnable {
                 System.out.println("Sin pausa");
 
                 this.proceso.admitir();
-                System.out.println("Proceso adminitido: " + this.proceso.getNombre() + " - "
+                System.out.println("Proceso admitido: " + this.proceso.getNombre() + " - "
                         + this.proceso.getTiempoEjecucionR());                
                 if (this.proceso.getTiempoEjecucionR() == 0){
                 	this.pausado = true;
@@ -103,23 +103,22 @@ public class Ejecucion implements Runnable {
                 	while (!this.proceso.isTerminado()) {
                 		this.proceso.disminuirTiempoEjecucion();
                 		System.out.println("Tiempo restante: " + this.proceso.getTiempoEjecucionR());               		
-                		try {
-                			Thread.sleep(1000); // 1 segundo
-                		} catch (InterruptedException e) {
-                			e.printStackTrace();
-                		}
+                		this.sleepMe(1000);
                 	}
                 	
                 }
             } else {
                 System.out.println("Pausado");
             }
-            try {
-                Thread.sleep(400); //1 segundo
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            this.sleepMe(400);
         }
+    }
+    private void sleepMe(int time){
+    	try {
+			Thread.sleep(time); 
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
     }
     /**
      *ejecutar hilo 

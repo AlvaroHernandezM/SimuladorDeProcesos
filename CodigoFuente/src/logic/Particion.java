@@ -6,50 +6,59 @@ package logic;
  */
 public class Particion {
 	
-	private int tamano;
-	private boolean ocupado;
+	private int posInicial, posFinal, tamano;
 	private Ejecucion ejecucion;
+	private boolean restriccion; //restriccion de recibir un proceso (true - particion ociossa)
 	
-	
-	public Particion(Proceso proceso){
-		this.ocupado = true;
-		this.tamano = proceso.getTamano();
-		this.ejecucion = new Ejecucion();
-		this.ejecucion.agregarProceso(proceso);		
-	}
-	
-	public Particion(int tamano){
-		this.ocupado = false;
-		this.tamano = tamano;		
-		this.ejecucion = new Ejecucion();
+	/**
+	 * @param posInicial
+	 * @param posFinal
+	 * @param tamano
+	 */
+	public Particion(int posInicial, int posFinal, int tamano, boolean restriccion) {
+		super();
+		this.posInicial = posInicial;
+		this.posFinal = posFinal;
+		this.tamano = tamano;
+		this.restriccion = restriccion;
 	}
 	
 	public void agregarProceso(Proceso proceso){
-		this.ocupado = true;
-		this.tamano = proceso.getTamano();
-		this.ejecucion.agregarProceso(proceso);		
+		if(!this.restriccion) {
+			this.ejecucion = new Ejecucion(proceso);
+		} else {
+			System.out.println("No se puede agregar a esta particion");
+		}
 	}
 	
+	public boolean algunaNovedad(){
+		return this.ejecucion.algunaNovedad();
+	}
 	
+	public Particion obtener(){
+		return this;
+	}
 
 	/**
-	 * @param ocupado the ocupado to set
+	 * @return the posInicial
 	 */
-	public void setOcupado(boolean ocupado) {
-		this.ocupado = ocupado;
+	public int getPosInicial() {
+		return posInicial;
 	}
 
+	/**
+	 * @return the posFinal
+	 */
+	public int getPosFinal() {
+		return posFinal;
+	}
+
+	/**
+	 * @return the tamano
+	 */
 	public int getTamano() {
 		return tamano;
 	}
-
-	public void setTamano(int tamano) {
-		this.tamano = tamano;
-	}
-
-	public boolean isOcupado() {
-		return ocupado;
-	}
-
-
+	
+	
 }
