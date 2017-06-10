@@ -15,6 +15,7 @@ public class Memoria implements Runnable{
 	private Thread thread;
 	private boolean pausado, terminado;
 	private ArrayList<Particion> novedades;
+	private ColaProcesos procesosTerminados;
 	
 	public Memoria(int cantidadTotal) {
 		super();
@@ -24,9 +25,10 @@ public class Memoria implements Runnable{
 		this.ejecuciones = new ArrayList<>();
 		this.ociosos = new ArrayList<>();
 		this.novedades = new ArrayList<>();
+		this.procesosTerminados = new ColaProcesos();
 		
 		this.terminado = false;
-		this.pausado = true;
+		this.pausado = false;
 		
 		this.crearUnidades();
 		this.ejecutar();
@@ -34,40 +36,27 @@ public class Memoria implements Runnable{
 	
 	public boolean agregarProceso(Proceso proceso){		
 		if (!isMayorAMemoria(proceso.getTamano())){
-			int posicionLibre = isEspacioLibre(proceso.getTamano()); 
-			if(posicionLibre != -1){				
-				this.agregarParticion(proceso, posicionLibre);
-				
+			Particion particionOciosa = this.particionOciosaDisponible(proceso.getTamano()); 
+			if(particionOciosa != null){
+				int posInicialLibre = particionOciosa.getPosInicial();
+				int posFinal = particionOciosa.getPosFinal();
+				if(particionOciosa.getTamano() > proceso.getTamano()){
+					posFinal = ( (posInicialLibre+proceso.getTamano()) - 1 );			
+				}
+				this.agregarOcupado(posInicialLibre, posFinal);					
+				Particion particion = new Particion(posInicialLibre, posFinal, proceso.getTamano(), false);
+				particion.agregarProceso(proceso);
+				this.ejecuciones.add(particion);
+				return true;
 			} else {
-				System.out.println("No se encontro espacio para el proceso ");
-				return false;
+				System.out.println("En el momento no se ecneuntra un espacio ocioso disponible");				
 			}
 		} else {
 			System.out.println("El proceso tiene más tamaño que la memoria total permitida");			
 		}
 		return false;
 	}
-	
-	private void agregarParticion(Proceso proceso, int posicionLibre){
 		
-		if(this.isUltimaPosicion(posicionLibre)){
-			
-			
-		} else {
-			//no es la ultima posicion de la memoria
-			
-		}
-		
-	}
-	
-	/**
-	 * @param posicion
-	 * @return
-	 */
-	private boolean isUltimaPosicion(int posicion){
-		return this.unidades.size()-1 == posicion ? true : false;
-	}
-	
 	/**
 	 *crea particiones de 1MB a partir del tamaño total (MB)  
 	 */
@@ -78,14 +67,16 @@ public class Memoria implements Runnable{
 	}
 	
 	/**
-	 * verifica que si hay memoria para un proceso en un espacio y retorna su posicion
+	 * verifica que si hay memoria para un proceso en un espacio ocisos y retorna su posicion inicial
 	 * @return
 	 */
-	private int isEspacioLibre(int tamano){
-		for (int i = 0; i < this.unidades.size(); i++) {
-			
-		}			
-		return -1;
+	private Particion particionOciosaDisponible(int tamano){
+		for (int i = 0; i < this.ociosos.size(); i++) {
+			if(this.ociosos.get(i).getTamano() >= tamano){
+				return this.ociosos.get(i);				
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -96,18 +87,27 @@ public class Memoria implements Runnable{
 		return tamano>this.cantidadTotal ? true : false;
 	}
 
-
+	
 	
 	private void actualizarOciosos(){
 		ArrayList<Particion> ociososRecientes = new ArrayList<>();
 		for (int i = 0; i < this.unidades.size(); i++) {
 			if(!this.unidades.get(i).isOcupado()){
-				int espacioDisponible = this.contarEspacioDisponible(i)+i;
-				ociososRecientes.add(new Particion(i, espacioDisponible, espacioDisponible - i, true));
-				i += espacioDisponible;
+				if(!this.isUltimaPosicion(i)){
+					int espacioDisponible = this.contarEspacioDisponible(i+1)+1; //+1 hace referencia al que ya se encontro desoucpado
+					int posicionFinal = (i + espacioDisponible) - 1; 
+					ociososRecientes.add(new Particion(i, posicionFinal, espacioDisponible, true));
+					i = posicionFinal; // debido que al empezar el for vuelve a sumar uno					
+				} else {
+					ociososRecientes.add(new Particion(i, i, 1, true));
+				}
 			}
 		}
-		
+		this.ociosos = ociososRecientes;
+	}
+	
+	private boolean isUltimaPosicion(int posicion){
+		return this.unidades.size()-1 == posicion;
 	}
 	
 	private int contarEspacioDisponible(int posicionInicial){
@@ -124,8 +124,16 @@ public class Memoria implements Runnable{
 	private void actualizarNovedadEjecuciones(){
 		for (int i = 0; i < this.ejecuciones.size(); i++) {
 			if(this.ejecuciones.get(i).algunaNovedad()){
-				this.novedades.add(this.ejecuciones.get(i).obtener());				
+				this.novedades.add(this.ejecuciones.get(i).obtener());
+				this.ejecuciones.get(i).terminarEjecucion();
+				this.ejecuciones.remove(i);
 			}
+		}
+	}
+	
+	private void agregarOcupado(int posInicial, int posFinal){
+		for (int i = posInicial; i <= posFinal; i++) {
+			this.unidades.get(i).ocupar();
 		}
 	}
 	
@@ -133,6 +141,7 @@ public class Memoria implements Runnable{
 		for (int i = particion.getPosInicial(); i <= particion.getPosFinal(); i++) {
 			this.unidades.get(i).desocupar();
 		}
+		this.procesosTerminados.agregar(particion.obtenerProceso());
 	}
 	
 	private Particion obtenerNovedad(){
@@ -140,29 +149,43 @@ public class Memoria implements Runnable{
 		this.novedades.remove(0);
 		return aux;
 	}
+	
+	private void imprimirOciosos(){
+		System.out.println("OCIOSOS");
+		for (int i = 0; i < this.ociosos.size(); i++) {
+			System.out.println("id "+(i+1)+" - pI: "+this.ociosos.get(i).getPosInicial()+" - pF: "+this.ociosos.get(i).getPosFinal()+" - tam: "+this.ociosos.get(i).getTamano());
+		}
+	}
 
 	@Override
 	public void run() {
 		while(!this.terminado){
 			if(!this.pausado){
 				this.actualizarOciosos();
+				this.imprimirOciosos();
 				//existe alfuna novedad de la lista de ejecucones para ntoificarle a gestion... si exiswte es porque ha terminado
 				//entonces se debe borrar esos espacios de la lista de unidad
 				this.actualizarNovedadEjecuciones();
 				if(!this.novedades.isEmpty()){					
 					this.borrarTerminado(this.obtenerNovedad());
 				}
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				this.sleepMe(1000);
 			} else {
 				System.out.println("Pausado la memoria");
+				this.sleepMe(1000);
 			}
 		}
+		System.out.println("Terminada la memoria");
 		
+	}
+	
+	private void sleepMe(int tiempo){
+		try {
+			Thread.sleep(tiempo);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -172,5 +195,25 @@ public class Memoria implements Runnable{
         thread = new Thread(this);
         thread.start();
     }
+
+	/**
+	 * @return the procesosTerminados
+	 */
+	public ColaProcesos getProcesosTerminados() {
+		return procesosTerminados;
+	}
+	  /**
+     *pausar hilo 
+     */
+    public void pausar() {
+        this.pausado = true;
+    }
+    /**
+     *terminar hilo 
+     */
+    public void terminar() {
+        this.terminado = true;
+    }
+    
 		
 }

@@ -54,30 +54,39 @@ public class Gestion implements Runnable {
         while (!isFinalizado()) {
             if (!pausado) {
                 if (!this.procesosListo.isVacia()) {                	
-                	Proceso proceso = this.procesosListo.getProcesoAux();
+                	Proceso proceso = this.procesosListo.getProcesoAux(); 
                 	if(this.memoria.agregarProceso(proceso)){
-                		System.out.println("Se ha ACEPTADO siguiente proceso de gestion de memoria: "+proceso.getNombre()+" - "+proceso.getTamano());
+                		System.out.println("Se ha ACEPTADO siguiente proceso de gestion de memoria: "+proceso.getNombre()+" - "+proceso.getTamano());                		
+                		//por lo cual se debe sacar de la lista 
+                		Proceso procesoEx = this.procesosListo.getProceso();
+                		System.out.println("por lo tanto se extrae el proceso de gestion: "+procesoEx.getNombre()+" - "+procesoEx.getTamano());                		
+
                 	} else {
-                		System.out.println("Se ha RECHAZADO siguiente proceso de gestion de memoria: "+proceso.getNombre()+" - "+proceso.getTamano());
+                		System.out.println("Se ha RECHAZADO siguiente proceso de gestion de memoria: "+proceso.getNombre()+" - "+proceso.getTamano());                		
                 	}
-                	//this.procesosTerminado.agregar(proceso);
+                	//se debe estar atento para verificar cuando existe una novedad
+                	//o sea cuando empiecen a acabar los procesos
+                	if(!this.memoria.getProcesosTerminados().isVacia()){
+                		this.procesosTerminado.agregar(this.memoria.getProcesosTerminados().getProceso());                		
+                	}
                 } else {
-                	System.out.println("La cola de procesos se vacio-- se debe esperar a que se llenen la cola de temrinandos");
+                	System.out.println("GESTION: La cola de procesos se vacio-- se debe esperar a que se llenen la cola de temrinandos");
                 	this.pausado = true;
                 }
                 //sleep
-                this.sleep2s();
+                this.sleepMe(1000);
             }else {
             	System.out.println("Pausada la gestion");
-            	try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+            	//se debe estar atento para verificar cuando existe una novedad
+            	//o sea cuando empiecen a acabar los procesos
+            	if(!this.memoria.getProcesosTerminados().isVacia()){
+            		this.procesosTerminado.agregar(this.memoria.getProcesosTerminados().getProceso());                		
+            	}
+            	this.sleepMe(1000);			
             }
         }
         System.out.println("ha terminadooooooo la gesiton");
+        this.memoria.terminar();
     }
     /**
      *Ejecutar hilo 
@@ -117,9 +126,9 @@ public class Gestion implements Runnable {
     /**
      *sleep para pausar dos segundos 
      */
-    private void sleep2s(){
+    private void sleepMe(int tiempo){
     	try {
-			Thread.sleep(2000);
+			Thread.sleep(tiempo);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

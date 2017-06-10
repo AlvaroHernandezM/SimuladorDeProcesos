@@ -23,12 +23,10 @@ public class Unidad {
 		this.ocupado = false;
 	}
 	
-	/**
-	 * @param ocupado the ocupado to set
-	 */
-	public void setOcupado(boolean ocupado) {
-		this.ocupado = ocupado;
+	public void ocupar(){
+		this.ocupado = true;
 	}
+	
 
 	/**
 	 * @return ocupado

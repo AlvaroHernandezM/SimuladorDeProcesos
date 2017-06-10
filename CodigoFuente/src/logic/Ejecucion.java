@@ -89,11 +89,10 @@ public class Ejecucion implements Runnable {
     	System.out.println("Inicio hilo Ejecucion");
         
         while (!this.finalizado) {
-        	System.out.println("Esperando");
+        	System.out.println("Esperando  EJECUCION");
 
             if (!this.pausado) {                
-                System.out.println("Sin pausa");
-
+            	
                 this.proceso.admitir();
                 System.out.println("Proceso admitido: " + this.proceso.getNombre() + " - "
                         + this.proceso.getTiempoEjecucionR());                
@@ -108,7 +107,7 @@ public class Ejecucion implements Runnable {
                 	
                 }
             } else {
-                System.out.println("Pausado");
+                System.out.println("Pausado EJECUCION");
             }
             this.sleepMe(400);
         }
