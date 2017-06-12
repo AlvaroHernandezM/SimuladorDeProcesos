@@ -1,7 +1,7 @@
 package logic;
 
 /**
- * CLASE ENCARGADA DE MANEJAR CADA PARTICIÒN DE LA MEMORIA
+ * CLASE ENCARGADA DE MANEJAR CADA PARTICIï¿½NoDE LA MEMORIA
  *
  */
 public class Particion {
@@ -27,7 +27,7 @@ public class Particion {
 		if(!this.restriccion) {
 			this.ejecucion = new Ejecucion(proceso);
 		} else {
-			System.out.println("No se puede agregar a esta particion");
+			System.out.println("No se puede agregar procesos a esta particion");
 		}
 	}
 	
@@ -37,6 +37,10 @@ public class Particion {
 	
 	public Particion obtener(){
 		return this;
+	}
+	
+	public Proceso obtenerProceso(){
+		return this.ejecucion.getProceso();
 	}
 
 	/**
@@ -60,5 +64,8 @@ public class Particion {
 		return tamano;
 	}
 	
+	public void terminarEjecucion(){
+		this.ejecucion.terminar();
+	}
 	
 }

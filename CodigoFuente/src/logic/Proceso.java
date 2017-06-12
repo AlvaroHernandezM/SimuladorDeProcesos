@@ -1,5 +1,7 @@
 package logic;
 
+import java.awt.Color;
+
 /**
  * @author - SO2017
  * Clase proceso
@@ -10,6 +12,7 @@ public class Proceso {
     private int tiempoEjecucionR, tiempoEjecucionT; //R = Restante, T = Total 
     private Estado estado;
     private int tamano; 
+    private Color color;
 
     /**
      * COSNTRUCTUR CON TAMANO
@@ -17,14 +20,19 @@ public class Proceso {
      * @param tiempoEjecucionT
      * @param tamano
      */
-    public Proceso(String nombre, int tiempoEjecucionT, int tamano) {
+    public Proceso(String nombre, int tiempoEjecucionT, int tamano,Color c) {
 		super();
 		this.nombre = nombre;
 		this.tiempoEjecucionT = tiempoEjecucionT;
 		this.tamano = tamano;
+                this.color = c;
 		this.tiempoEjecucionR = this.tiempoEjecucionT;
         this.estado = Estado.NUEVO;
 	}
+
+    public Color getColor() {
+        return color;
+    }
     /**
      * constructor
      * @param nombre 
@@ -45,7 +53,7 @@ public class Proceso {
         super();
     }
     /**
-     * tranciciòn de adminito en el cual
+     * tranciciï¿½n de adminito en el cual
      * cambia su estado a LISTO 
      */
     public void admitir() {

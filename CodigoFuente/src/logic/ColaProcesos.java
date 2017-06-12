@@ -5,7 +5,7 @@ import java.util.ArrayList;
 /**
  * @author  - SO2017
  * Clase encarga de contener una lista de procesos
- * y los métodos que se pueden ejecutar 
+ * y los mï¿½todos que se pueden ejecutar 
  */
 public class ColaProcesos {
 
@@ -30,7 +30,7 @@ public class ColaProcesos {
 	}
 	/**
 	 * Obtener el proceso que se encuentra de primero
-	 * y eliminando dicha posición (COLA)
+	 * y eliminando dicha posiciï¿½n (COLA)
 	 * @return el proceso primero en la cola
 	 */
 	public Proceso getProceso(){
@@ -70,7 +70,7 @@ public class ColaProcesos {
 	}
 	/**
 	 * Obtener tamano de la cola
-	 * @return tamaño de la cola
+	 * @return tamaï¿½o de la cola
 	 */
 	public int getTamano(){
 		return this.deque.size();
@@ -96,4 +96,13 @@ public class ColaProcesos {
 	public void setDeque(ArrayList<Proceso> deque) {
 		this.deque = deque;
 	}
+        
+        public int posicionProceso (Proceso proceso){
+            for (int i = 0; i < this.deque.size(); i++) {
+                if (proceso.getNombre().equals(this.deque.get(i).getNombre())){
+                    return i;
+                }
+            }
+            return -1;
+        }
 }
