@@ -34,6 +34,12 @@ public class Memoria implements Runnable{
 		this.ejecutar();
 	}
 	
+	/**
+	 * metodo para agregar  proceso debiendo el booleano correspondientes si existe
+	 * espacio o no
+	 * @param proceso
+	 * @return
+	 */
 	public boolean agregarProceso(Proceso proceso){		
 		if (!isMayorAMemoria(proceso.getTamano())){
 			Particion particionOciosa = this.particionOciosaDisponible(proceso.getTamano()); 
@@ -108,6 +114,10 @@ public class Memoria implements Runnable{
 
 	
 	
+	/**
+	 *
+	 * metodo se actualiza la lisata de ocsios, revisada unidad por unidad 
+	 */
 	private void actualizarOciosos(){
 		ArrayList<Particion> ociososRecientes = new ArrayList<>();
 		for (int i = 0; i < this.unidades.size(); i++) {
@@ -125,10 +135,20 @@ public class Memoria implements Runnable{
 		this.ociosos = ociososRecientes;
 	}
 	
+	/**
+	 * verifica si la posicion dada es la ultimaposicion
+	 * @param posicion
+	 * @return
+	 */
 	private boolean isUltimaPosicion(int posicion){
 		return this.unidades.size()-1 == posicion;
 	}
 	
+	/**
+	 * cuenta el espacio disponible desde una posicion inicial
+	 * @param posicionInicial
+	 * @return
+	 */
 	private int contarEspacioDisponible(int posicionInicial){
 		int contador = 0;
 		for (int i = posicionInicial; i < this.unidades.size(); i++) {
@@ -140,6 +160,9 @@ public class Memoria implements Runnable{
 		return contador;
 	}
 	
+	/**
+	 *actualiza la lista de novedades desde la ejecuciones 
+	 */
 	private void actualizarNovedadEjecuciones(){
 		for (int i = 0; i < this.ejecuciones.size(); i++) {
 			if(this.ejecuciones.get(i).algunaNovedad()){
@@ -150,18 +173,32 @@ public class Memoria implements Runnable{
 		}
 	}
 	
+	/**
+	 * agrega espacio ocupado desde una posicion incial a una final
+	 * @param posInicial
+	 * @param posFinal
+	 */
 	private void agregarOcupado(int posInicial, int posFinal){
 		for (int i = posInicial; i <= posFinal; i++) {
 			this.unidades.get(i).ocupar();
 		}
 	}
 	
+	/**
+	 * quita espacio ocupado esde una posicion inicial a una final
+	 * @param posInicial
+	 * @param posFinal
+	 */
 	private void quitarOcupado(int posInicial, int posFinal){
 		for (int i = posInicial; i <= posFinal; i++) {
 			this.unidades.get(i).desocupar();;
 		}
 	}
 	
+	/**
+	 * borra una particion terminada en la unidades
+	 * @param particion
+	 */
 	private void borrarTerminado(Particion particion){
 		for (int i = particion.getPosInicial(); i <= particion.getPosFinal(); i++) {
 			this.unidades.get(i).desocupar();
@@ -169,12 +206,19 @@ public class Memoria implements Runnable{
 		this.procesosTerminados.agregar(particion.obtenerProceso());
 	}
 	
+	/**
+	 * obtiene una noveda de la particion
+	 * @return
+	 */
 	private Particion obtenerNovedad(){
 		Particion aux = this.novedades.get(0);
 		this.novedades.remove(0);
 		return aux;
 	}
 	
+	/**
+	 *metodo para imrpirmi ociosos 
+	 */
 	private void imprimirOciosos(){
 		System.out.println("OCIOSOS");
 		for (int i = 0; i < this.ociosos.size(); i++) {
@@ -204,6 +248,10 @@ public class Memoria implements Runnable{
 		
 	}
 	
+	/**
+	 * metodo sleep crecibiendo parametro ded  tiempo
+	 * @param tiempo
+	 */
 	private void sleepMe(int tiempo){
 		try {
 			Thread.sleep(tiempo);

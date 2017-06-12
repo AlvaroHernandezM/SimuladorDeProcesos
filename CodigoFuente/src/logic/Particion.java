@@ -23,6 +23,10 @@ public class Particion {
 		this.restriccion = restriccion;
 	}
 	
+	/**
+	 * agrega proceso
+	 * @param proceso
+	 */
 	public void agregarProceso(Proceso proceso){
 		if(!this.restriccion) {
 			this.ejecucion = new Ejecucion(proceso);

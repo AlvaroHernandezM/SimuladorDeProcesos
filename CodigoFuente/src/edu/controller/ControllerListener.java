@@ -216,7 +216,7 @@ public class ControllerListener implements ActionListener, Runnable {
      * Metodo que permite compactar la memoria.
      */
     public void compactarMemoria() {
-        System.err.println("soy_metodo_para_compactar_memoria");
+        this.gestionMemoria.compactar();
     }
 
     /**

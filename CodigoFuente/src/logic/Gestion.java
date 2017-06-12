@@ -2,7 +2,7 @@ package logic;
 
 /**
  * @author - SO2017 Clase encargada de estar actualizando las respectivas listas
- * para los procesos listos, blosqueados y terminados
+ * de memoria y puente entre gui
  */
 public class Gestion implements Runnable {
 
@@ -23,6 +23,10 @@ public class Gestion implements Runnable {
     }
     
 
+    /**
+     * se agrega la cola de proceso y se da inicio a la ejecucion
+     * @param procesosListo
+     */
     public void agregarColaProcesos(ColaProcesos procesosListo) {
         this.procesosListo = procesosListo;
         this.procesosTerminado = new ColaProcesos();
