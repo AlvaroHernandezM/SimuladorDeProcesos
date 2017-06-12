@@ -67,5 +67,21 @@ public class Particion {
 	public void terminarEjecucion(){
 		this.ejecucion.terminar();
 	}
+
+	/**
+	 * @param posInicial the posInicial to set
+	 */
+	public void setPosInicial(int posInicial) {
+		this.posInicial = posInicial;
+	}
+
+	/**
+	 * @param posFinal the posFinal to set
+	 */
+	public void setPosFinal(int posFinal) {
+		this.posFinal = posFinal;
+	}
+	
+	
 	
 }

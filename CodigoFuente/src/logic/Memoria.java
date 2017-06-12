@@ -56,7 +56,26 @@ public class Memoria implements Runnable{
 		}
 		return false;
 	}
-		
+	/**
+	 *compactar memroia 
+	 */
+	public void compactar() {
+		for (int i = 0; i < this.ejecuciones.size(); i++) {
+			if (i==0){
+				this.quitarOcupado(this.ejecuciones.get(i).getPosInicial(),this.ejecuciones.get(i).getPosFinal());
+				this.ejecuciones.get(i).setPosInicial(0);
+				this.ejecuciones.get(i).setPosFinal(this.ejecuciones.get(i).getTamano());
+				this.agregarOcupado(this.ejecuciones.get(i).getPosInicial(), this.ejecuciones.get(i).getPosFinal());
+			} else {
+				this.quitarOcupado(this.ejecuciones.get(i).getPosInicial(),this.ejecuciones.get(i).getPosFinal());
+				int posInicial = this.ejecuciones.get(i-1).getPosFinal() + 1;
+				this.ejecuciones.get(i).setPosInicial(posInicial);
+				this.ejecuciones.get(i).setPosFinal(this.ejecuciones.get(i).getTamano() + posInicial);
+				this.agregarOcupado(this.ejecuciones.get(i).getPosInicial(), this.ejecuciones.get(i).getPosFinal());
+			}
+		}
+	}
+    	
 	/**
 	 *crea particiones de 1MB a partir del tama�o total (MB)  
 	 */
@@ -134,6 +153,12 @@ public class Memoria implements Runnable{
 	private void agregarOcupado(int posInicial, int posFinal){
 		for (int i = posInicial; i <= posFinal; i++) {
 			this.unidades.get(i).ocupar();
+		}
+	}
+	
+	private void quitarOcupado(int posInicial, int posFinal){
+		for (int i = posInicial; i <= posFinal; i++) {
+			this.unidades.get(i).desocupar();;
 		}
 	}
 	
@@ -222,7 +247,8 @@ public class Memoria implements Runnable{
     public ArrayList<Particion> getOciosos() {
         return ociosos;
     }
-    
+
+	
     
     
 		

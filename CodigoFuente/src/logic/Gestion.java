@@ -55,7 +55,7 @@ public class Gestion implements Runnable {
      * compactar la memoria
      */
     public void compactar() {
-
+    	this.memoria.compactar();
     }
 
     @Override

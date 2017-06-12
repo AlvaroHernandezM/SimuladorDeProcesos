@@ -130,7 +130,7 @@ public class VentanaPrincipal extends JFrame {
         SliderTamano = new javax.swing.JSlider();
         jLabel5 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        etiquetaTamño = new javax.swing.JLabel();
+        etiquetaTamano = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jPanelProcesos = new javax.swing.JPanel();
@@ -218,7 +218,7 @@ public class VentanaPrincipal extends JFrame {
         jLabel7.setFont(new java.awt.Font("Book Antiqua", 0, 14)); // NOI18N
         jLabel7.setText("MAX (MB)");
 
-        etiquetaTamño.setFont(new java.awt.Font("Book Antiqua", 1, 14)); // NOI18N
+        etiquetaTamano.setFont(new java.awt.Font("Book Antiqua", 1, 14)); // NOI18N
 
         jLabel9.setFont(new java.awt.Font("Book Antiqua", 0, 14)); // NOI18N
         jLabel9.setText("(MB)");
@@ -257,7 +257,7 @@ public class VentanaPrincipal extends JFrame {
                             .addComponent(jButtonCrearProceso, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanelCrearProcesoLayout.createSequentialGroup()
                                 .addGap(15, 15, 15)
-                                .addComponent(etiquetaTamño, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(etiquetaTamano, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPanelCrearProcesoLayout.createSequentialGroup()
@@ -298,7 +298,7 @@ public class VentanaPrincipal extends JFrame {
                     .addComponent(SliderTamano, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanelCrearProcesoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(etiquetaTamño, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(etiquetaTamano, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanelCrearProcesoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -621,7 +621,7 @@ public class VentanaPrincipal extends JFrame {
     }//GEN-LAST:event_jTFtiempoProcesoKeyTyped
 
     private void SliderTamanoStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_SliderTamanoStateChanged
-        this.etiquetaTamño.setText(String.valueOf(this.SliderTamano.getValue()));
+        this.etiquetaTamano.setText(String.valueOf(this.SliderTamano.getValue()));
     }//GEN-LAST:event_SliderTamanoStateChanged
 
     private void campoMemoriaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_campoMemoriaKeyTyped
@@ -645,7 +645,7 @@ public class VentanaPrincipal extends JFrame {
     private javax.swing.JButton botonAsignarM;
     private javax.swing.JButton botonCompactar;
     private javax.swing.JTextField campoMemoria;
-    private javax.swing.JLabel etiquetaTamño;
+    private javax.swing.JLabel etiquetaTamano;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButtonAcercaDe;
     private javax.swing.JButton jButtonAnadirProceso;
